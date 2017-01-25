@@ -87,6 +87,7 @@ void yyerror(const char *msg); // standard error-handling routine
  */
 %type <declList>  DeclList
 %type <decl>      Decl
+/*type<type> function_call */ 
 
 
 
@@ -103,7 +104,17 @@ Program   :    DeclList            {
                                        * yacc to set up yylloc. You can remove
                                        * it once you have other uses of @n*/
                                       Program *program = new Program($1);
-                                      // if no errors, advance to next phase
+                                      /
+
+/* Tokens
+ * ------
+ * Here we tell yacc about all the token types that we are using.
+ * Bison will assign unique numbers to these and export the #define
+ * in the generated y.tab.h header file.
+ */
+%token   T_Void T_Bool T_Int T_Float
+%token   T_LessEqual T_GreaterEqual T_EQ T_NE T_LeftAngle T_RightAngle
+%token   T_And / if no errors, advance to next phase
                                       if (ReportError::NumErrors() == 0)
                                           program->Print(0);
                                     }
@@ -119,6 +130,26 @@ Decl      :    T_Int T_Identifier T_Semicolon {
                                                  $$ = new VarDecl(id, Type::intType);
                                               }
           ;
+
+integer_expression: expression {}
+                  ;
+
+function_call: function_call_or_method {/*actions*/}
+             ;
+
+function_call_or_method: function_call_generic {}
+                       ;
+
+function_call_generic: function_call_header_with_parameters T_RightParen {}
+                     | function_call_header_no_parameters T_RightParen {}
+		     ;
+
+function_call_header_no_parameters: function_call_header assignment_expression{}
+                                  | function_call_header_with_parameters
+				    T_Comma assignment_expression {}
+				  ;
+
+function_call_header: function_identifier T_LeftParen {}
 
 
 %%
