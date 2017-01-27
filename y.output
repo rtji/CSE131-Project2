@@ -1,3 +1,77 @@
+Nonterminals useless in grammar
+
+   variable_identifier
+   primary_expression
+   postfix_expression
+   integer_expression
+   function_call
+   function_call_or_method
+   function_call_generic
+   function_call_header_no_parameters
+   function_call_header_with_parameters
+   function_call_header
+   function_identifier
+   unary_expression
+   unary_operator
+   multiplicative_expression
+   additive_expression
+   shift_expression
+   relational_expression
+   equality_expression
+   and_expression
+   exclusive_or_expression
+   inclusive_or_expression
+   logical_and_expression
+   logical_xor_expression
+   logical_or_expression
+   conditional_expression
+   assignment_expression
+   assignment_operator
+   expression
+   constant_expression
+   declaration
+   function_prototype
+   function_declarator
+   function_header_with_parameters
+   function_header
+   parameter_declarator
+   parameter_declaration
+   parameter_type_specifier
+   init_declarator_list
+   single_declaration
+   fully_specified_type
+   type_qualifier
+   single_type_qualifier
+   storage_qualifier
+   type_specifier
+   array_specifier
+   type_specifier_nonarray
+   initializer
+   declaration_statement
+   statement
+   statement_no_new_scope
+   statement_with_scope
+   simple_statement
+   compound_statement_with_scope
+   compound_statement_no_new_scope
+   statement_list
+   expression_statement
+   selection_statement
+   selection_rest_statement
+   condition
+   switch_statement
+   switch_statement_list
+   case_label
+   iteration_statement
+   for_init_statement
+   conditionopt
+   for_rest_statement
+   jump_statement
+   translation_unit
+   external_declaration
+   function_definition
+
+
 Terminals unused in grammar
 
    T_Void
@@ -66,9 +140,248 @@ Terminals unused in grammar
    T_RightBracket
    T_LeftBrace
    T_RightBrace
+   T_FieldSelection
    T_IntConstant
    T_FloatConstant
    T_BoolConstant
+
+
+Rules useless in grammar
+
+    5 variable_identifier: T_Identifier
+
+    6 primary_expression: variable_identifier
+    7                   | T_IntConstant
+    8                   | T_Uint
+    9                   | T_FloatConstant
+   10                   | T_BoolConstant
+   11                   | T_LeftParen expression T_RightParen
+
+   12 postfix_expression: primary_expression
+   13                   | postfix_expression T_LeftBracket integer_expression T_RightBracket
+   14                   | function_call
+   15                   | postfix_expression
+   16                   | postfix_expression T_Dot T_FieldSelection
+   17                   | postfix_expression T_Inc
+   18                   | postfix_expression T_Dec
+
+   19 integer_expression: expression
+
+   20 function_call: function_call_or_method
+
+   21 function_call_or_method: function_call_generic
+
+   22 function_call_generic: function_call_header_with_parameters T_RightParen
+   23                      | function_call_header_no_parameters T_RightParen
+
+   24 function_call_header_no_parameters: function_call_header T_Void
+   25                                   | function_call_header
+
+   26 function_call_header_with_parameters: function_call_header assignment_expression
+   27                                     | function_call_header_with_parameters T_Comma assignment_expression
+
+   28 function_call_header: function_identifier T_LeftParen
+
+   29 function_identifier: type_specifier
+   30                    | postfix_expression
+
+   31 unary_expression: postfix_expression
+   32                 | T_Inc unary_expression
+   33                 | T_Dec unary_expression
+   34                 | unary_operator unary_expression
+
+   35 unary_operator: T_Plus
+   36               | T_Dash
+
+   37 multiplicative_expression: unary_expression
+   38                          | multiplicative_expression T_Star unary_expression
+   39                          | multiplicative_expression T_Slash unary_expression
+
+   40 additive_expression: multiplicative_expression
+   41                    | additive_expression T_Plus multiplicative_expression
+   42                    | additive_expression T_Dash multiplicative_expression
+
+   43 shift_expression: additive_expression
+
+   44 relational_expression: shift_expression
+   45                      | relational_expression T_LeftAngle shift_expression
+   46                      | relational_expression T_RightAngle shift_expression
+   47                      | relational_expression T_LessEqual shift_expression
+   48                      | relational_expression T_GreaterEqual shift_expression
+
+   49 equality_expression: relational_expression
+   50                    | equality_expression T_EQ relational_expression
+   51                    | equality_expression T_NE relational_expression
+
+   52 and_expression: equality_expression
+
+   53 exclusive_or_expression: and_expression
+
+   54 inclusive_or_expression: exclusive_or_expression
+
+   55 logical_and_expression: inclusive_or_expression
+   56                       | logical_and_expression T_And inclusive_or_expression
+
+   57 logical_xor_expression: logical_and_expression
+
+   58 logical_or_expression: logical_xor_expression
+   59                      | logical_or_expression T_Or logical_xor_expression
+
+   60 conditional_expression: logical_or_expression
+   61                       | logical_or_expression T_Question expression T_Colon assignment_expression
+
+   62 assignment_expression: conditional_expression
+   63                      | unary_expression assignment_operator assignment_expression
+
+   64 assignment_operator: T_Equal
+   65                    | T_MulAssign
+   66                    | T_DivAssign
+   67                    | T_AddAssign
+   68                    | T_SubAssign
+
+   69 expression: assignment_expression
+
+   70 constant_expression: conditional_expression
+
+   71 declaration: function_prototype T_Semicolon
+   72            | init_declarator_list T_Semicolon
+   73            | type_qualifier T_Identifier T_Semicolon
+
+   74 function_prototype: function_declarator T_RightParen
+
+   75 function_declarator: function_header
+   76                    | function_header_with_parameters
+
+   77 function_header_with_parameters: function_header parameter_declaration
+   78                                | function_header_with_parameters T_Comma parameter_declaration
+
+   79 function_header: fully_specified_type T_Identifier T_LeftParen
+
+   80 parameter_declarator: type_specifier T_Identifier
+
+   81 parameter_declaration: parameter_declarator
+   82                      | parameter_type_specifier
+
+   83 parameter_type_specifier: type_specifier
+
+   84 init_declarator_list: single_declaration
+
+   85 single_declaration: fully_specified_type
+   86                   | fully_specified_type T_Identifier
+   87                   | fully_specified_type T_Identifier array_specifier
+   88                   | fully_specified_type T_Identifier T_Equal initializer
+
+   89 fully_specified_type: type_specifier
+   90                     | type_qualifier type_specifier
+
+   91 type_qualifier: single_type_qualifier
+   92               | type_qualifier single_type_qualifier
+
+   93 single_type_qualifier: storage_qualifier
+
+   94 storage_qualifier: T_Const
+   95                  | T_In
+   96                  | T_Out
+   97                  | T_Uniform
+
+   98 type_specifier: type_specifier_nonarray
+   99               | type_specifier_nonarray array_specifier
+
+  100 array_specifier: T_LeftBracket constant_expression T_RightBracket
+
+  101 type_specifier_nonarray: T_Void
+  102                        | T_Float
+  103                        | T_Int
+  104                        | T_Uint
+  105                        | T_Bool
+  106                        | T_Vec2
+  107                        | T_Vec3
+  108                        | T_Vec4
+  109                        | T_Bvec2
+  110                        | T_Bvec3
+  111                        | T_Bvec4
+  112                        | T_Ivec2
+  113                        | T_Ivec3
+  114                        | T_Ivec4
+  115                        | T_Uvec2
+  116                        | T_Uvec3
+  117                        | T_Uvec4
+  118                        | T_Mat2
+  119                        | T_Mat3
+  120                        | T_Mat4
+
+  121 initializer: assignment_expression
+
+  122 declaration_statement: declaration
+
+  123 statement: compound_statement_with_scope
+  124          | simple_statement
+
+  125 statement_no_new_scope: compound_statement_no_new_scope
+  126                       | simple_statement
+
+  127 statement_with_scope: compound_statement_no_new_scope
+  128                     | simple_statement
+
+  129 simple_statement: declaration_statement
+  130                 | expression_statement
+  131                 | selection_statement
+  132                 | switch_statement
+  133                 | case_label
+  134                 | iteration_statement
+  135                 | jump_statement
+
+  136 compound_statement_with_scope: T_LeftBrace T_RightBrace
+  137                              | T_LeftBrace statement_list T_RightBrace
+
+  138 compound_statement_no_new_scope: T_LeftBrace T_RightBrace
+  139                                | T_LeftBrace statement_list T_RightBrace
+
+  140 statement_list: statement
+  141               | statement_list statement
+
+  142 expression_statement: T_Semicolon
+  143                     | expression T_Semicolon
+
+  144 selection_statement: T_If T_LeftParen expression T_RightParen selection_rest_statement
+
+  145 selection_rest_statement: statement_with_scope T_Else statement_with_scope
+  146                         | statement_with_scope
+
+  147 condition: expression
+  148          | fully_specified_type T_Identifier T_Equal initializer
+
+  149 switch_statement: T_Switch T_LeftParen expression T_RightParen T_LeftBrace switch_statement_list T_RightBrace
+
+  150 switch_statement_list: statement_list
+
+  151 case_label: T_Case expression T_Colon
+  152           | T_Default T_Colon
+
+  153 iteration_statement: T_While T_LeftParen condition T_RightParen statement_no_new_scope
+  154                    | T_Do statement_with_scope T_While T_LeftParen expression T_RightParen T_Semicolon
+  155                    | T_For T_LeftParen for_init_statement for_rest_statement T_RightParen statement_no_new_scope
+
+  156 for_init_statement: expression_statement
+  157                   | declaration_statement
+
+  158 conditionopt: condition
+
+  159 for_rest_statement: conditionopt T_Semicolon
+  160                   | conditionopt T_Semicolon expression
+
+  161 jump_statement: T_Continue T_Semicolon
+  162               | T_Break T_Semicolon
+  163               | T_Return T_Semicolon
+  164               | T_Return expression T_Semicolon
+
+  165 translation_unit: external_declaration
+  166                 | translation_unit external_declaration
+
+  167 external_declaration: function_definition
+  168                     | declaration
+
+  169 function_definition: function_prototype compound_statement_no_new_scope
 
 
 Grammar
@@ -156,20 +469,21 @@ T_RightBracket (323)
 T_LeftBrace (324)
 T_RightBrace (325)
 T_Identifier (326) 4
-T_IntConstant (327)
-T_FloatConstant (328)
-T_BoolConstant (329)
+T_FieldSelection (327)
+T_IntConstant (328)
+T_FloatConstant (329)
+T_BoolConstant (330)
 
 
 Nonterminals, with rules where they appear
 
-$accept (75)
+$accept (76)
     on left: 0
-Program (76)
+Program (77)
     on left: 1, on right: 0
-DeclList (77)
+DeclList (78)
     on left: 2 3, on right: 1 2
-Decl (78)
+Decl (79)
     on left: 4, on right: 2 3
 
 

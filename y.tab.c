@@ -182,9 +182,10 @@ void yyerror(const char *msg); // standard error-handling routine
      T_LeftBrace = 324,
      T_RightBrace = 325,
      T_Identifier = 326,
-     T_IntConstant = 327,
-     T_FloatConstant = 328,
-     T_BoolConstant = 329
+     T_FieldSelection = 327,
+     T_IntConstant = 328,
+     T_FloatConstant = 329,
+     T_BoolConstant = 330
    };
 #endif
 /* Tokens.  */
@@ -257,9 +258,10 @@ void yyerror(const char *msg); // standard error-handling routine
 #define T_LeftBrace 324
 #define T_RightBrace 325
 #define T_Identifier 326
-#define T_IntConstant 327
-#define T_FloatConstant 328
-#define T_BoolConstant 329
+#define T_FieldSelection 327
+#define T_IntConstant 328
+#define T_FloatConstant 329
+#define T_BoolConstant 330
 
 
 
@@ -281,7 +283,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 285 "y.tab.c"
+#line 287 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -306,7 +308,7 @@ typedef struct YYLTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 310 "y.tab.c"
+#line 312 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -526,7 +528,7 @@ union yyalloc
 #define YYLAST   4
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  75
+#define YYNTOKENS  76
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  4
 /* YYNRULES -- Number of rules.  */
@@ -536,7 +538,7 @@ union yyalloc
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   329
+#define YYMAXUTOK   330
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -576,7 +578,8 @@ static const yytype_uint8 yytranslate[] =
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
       55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
-      65,    66,    67,    68,    69,    70,    71,    72,    73,    74
+      65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
+      75
 };
 
 #if YYDEBUG
@@ -590,14 +593,14 @@ static const yytype_uint8 yyprhs[] =
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      76,     0,    -1,    77,    -1,    77,    78,    -1,    78,    -1,
+      77,     0,    -1,    78,    -1,    78,    79,    -1,    79,    -1,
        5,    71,    56,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   100,   100,   112,   113,   116
+       0,   101,   101,   113,   114,   117
 };
 #endif
 
@@ -618,8 +621,8 @@ static const char *const yytname[] =
   "T_Semicolon", "T_Dot", "T_Colon", "T_Question", "T_Comma", "T_Dash",
   "T_Plus", "T_Star", "T_Slash", "T_LeftParen", "T_RightParen",
   "T_LeftBracket", "T_RightBracket", "T_LeftBrace", "T_RightBrace",
-  "T_Identifier", "T_IntConstant", "T_FloatConstant", "T_BoolConstant",
-  "$accept", "Program", "DeclList", "Decl", 0
+  "T_Identifier", "T_FieldSelection", "T_IntConstant", "T_FloatConstant",
+  "T_BoolConstant", "$accept", "Program", "DeclList", "Decl", 0
 };
 #endif
 
@@ -635,14 +638,14 @@ static const yytype_uint16 yytoknum[] =
      295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
      305,   306,   307,   308,   309,   310,   311,   312,   313,   314,
      315,   316,   317,   318,   319,   320,   321,   322,   323,   324,
-     325,   326,   327,   328,   329
+     325,   326,   327,   328,   329,   330
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    75,    76,    77,    77,    78
+       0,    76,    77,    78,    78,    79
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -698,7 +701,7 @@ static const yytype_uint8 yycheck[] =
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     5,    76,    77,    78,    71,     0,    78,    56
+       0,     5,    77,    78,    79,    71,     0,    79,    56
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1547,37 +1550,37 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 100 "parser.y"
+#line 101 "parser.y"
     {
                                       (yylsp[(1) - (1)]);
                                       /* pp2: The @1 is needed to convince
                                        * yacc to set up yylloc. You can remove
                                        * it once you have other uses of @n*/
                                       Program *program = new Program((yyvsp[(1) - (1)].declList));
-                                      // if no errors, advance to next phase
+                                      // If no errors, advance to next phase
                                       if (ReportError::NumErrors() == 0)
                                           program->Print(0);
-                                    }
+                                   }
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 112 "parser.y"
+#line 113 "parser.y"
     { ((yyval.declList)=(yyvsp[(1) - (2)].declList))->Append((yyvsp[(2) - (2)].decl)); }
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 113 "parser.y"
+#line 114 "parser.y"
     { ((yyval.declList) = new List<Decl*>)->Append((yyvsp[(1) - (1)].decl)); }
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 116 "parser.y"
+#line 117 "parser.y"
     {
                                                  // replace it with your implementation
                                                  Identifier *id = new Identifier((yylsp[(2) - (3)]), (yyvsp[(2) - (3)].identifier));
@@ -1588,7 +1591,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 1592 "y.tab.c"
+#line 1595 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1807,7 +1810,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 124 "parser.y"
+#line 484 "parser.y"
 
 
 /* The closing %% above marks the end of the Rules section and the beginning

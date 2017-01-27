@@ -69,7 +69,7 @@ void yyerror(const char *msg); // standard error-handling routine
 %token   T_Dash T_Plus T_Star T_Slash
 %token   T_LeftParen T_RightParen T_LeftBracket T_RightBracket T_LeftBrace T_RightBrace
 
-%token   <identifier> T_Identifier
+%token   <identifier> T_Identifier T_FieldSelection
 %token   <integerConstant> T_IntConstant
 %token   <floatConstant> T_FloatConstant
 %token   <boolConstant> T_BoolConstant
@@ -104,20 +104,10 @@ Program   :    DeclList            {
                                        * yacc to set up yylloc. You can remove
                                        * it once you have other uses of @n*/
                                       Program *program = new Program($1);
-                                      /
-
-/* Tokens
- * ------
- * Here we tell yacc about all the token types that we are using.
- * Bison will assign unique numbers to these and export the #define
- * in the generated y.tab.h header file.
- */
-%token   T_Void T_Bool T_Int T_Float
-%token   T_LessEqual T_GreaterEqual T_EQ T_NE T_LeftAngle T_RightAngle
-%token   T_And / if no errors, advance to next phase
+                                      // If no errors, advance to next phase
                                       if (ReportError::NumErrors() == 0)
                                           program->Print(0);
-                                    }
+                                   }
           ;
 
 DeclList  :    DeclList Decl        { ($$=$1)->Append($2); }
@@ -131,7 +121,7 @@ Decl      :    T_Int T_Identifier T_Semicolon {
                                               }
           ;
 
-variable_identifier: T_Indentifier
+variable_identifier: T_Identifier
                    ;
 
 primary_expression: variable_identifier
@@ -185,8 +175,7 @@ unary_expression: postfix_expression
 
 unary_operator: T_Plus
               | T_Dash
-              | T_Bang // right?
-              | T_Tilde         // right?
+              ;
 
 multiplicative_expression: unary_expression
                          | multiplicative_expression T_Star unary_expression
