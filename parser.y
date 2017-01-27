@@ -45,8 +45,6 @@ void yyerror(const char *msg); // standard error-handling routine
     char identifier[MaxIdentLen+1]; // +1 for terminating null
     Decl *decl;
     List<Decl*> *declList;
-		Type *type;
-		TypeQualifier *typeQualifier;
 }
 
 
@@ -89,6 +87,7 @@ void yyerror(const char *msg); // standard error-handling routine
  */
 %type <declList>  DeclList
 %type <decl>      declaration
+/*type<type> function_call */ 
 
 
 %%
@@ -117,21 +116,25 @@ DeclList  :
 ;
 
 /*
+  ($$=$1)->Append($2);
+
+  List<Decl*> list = $1
+  list->Append($2)
+  $$=list
+*/
+
+/*
 Decl:    
 T_Int T_Identifier T_Semicolon {
   // replace it with your implementation
-  Identifier *id = new Identifier(@2,$2);
+  Identifier *id = new Identifier(@2, $2);
   $$ = new VarDecl(id, Type::intType);
   }
 ;
-*/
-
+*/ 
 
 variable_identifier: 
-  T_Identifier { 
-	  Identifier *id = new Identifier(@1,$1); 
-		$$ = new Decl(id);
-	}
+  T_Identifier {}
 ;
 
 primary_expression: 
@@ -175,12 +178,12 @@ function_call_header_no_parameters:
 ;
 
 function_call_header_with_parameters: 
-  function_call_header assignment_expression
-  | function_call_header_with_parameters T_Comma assignment_expression
+function_call_header assignment_expression
+| function_call_header_with_parameters T_Comma assignment_expression
 ;
 
 function_call_header: 
-  function_identifier T_LeftParen {}
+function_identifier T_LeftParen {}
 ;
 
 function_identifier: 
@@ -196,11 +199,12 @@ unary_expression:
 ;
 
 unary_operator: 
-  T_Plus
-  | T_Dash
+T_Plus
+| T_Dash
 ;
 
 multiplicative_expression: 
+<<<<<<< HEAD
   unary_expression { $$ = $1; }
   | multiplicative_expression T_Star unary_expression
   | multiplicative_expression T_Slash unary_expression
@@ -267,14 +271,15 @@ assignment_expression:
 ;
 
 assignment_operator:
-  T_Equal
-  | T_MulAssign
-  | T_DivAssign
-  | T_AddAssign
-  | T_SubAssign
+T_Equal
+| T_MulAssign
+| T_DivAssign
+| T_AddAssign
+| T_SubAssign
 ;
 
 expression:
+<<<<<<< HEAD
   assignment_expression { $$ = $1; }
 ;
 
@@ -294,7 +299,7 @@ declaration:
 ;
 
 function_prototype:
-  function_declarator T_RightParen
+function_declarator T_RightParen
 ;
 
 function_declarator:
@@ -316,6 +321,7 @@ parameter_declarator:
 ;
 
 parameter_declaration:
+<<<<<<< HEAD
   parameter_declarator { $$ = $1; }
   | parameter_type_specifier { $$ = $1; }
 ;
@@ -360,7 +366,7 @@ storage_qualifier:
 ;
 
 type_specifier:
-  type_specifier_nonarray { $$ = $1; }
+  type_specifier_nonarray
   | type_specifier_nonarray array_specifier
 ;
 
@@ -379,7 +385,7 @@ type_specifier_nonarray:
   | T_Vec4 { $$ = Type::vec4Type; }
   | T_Bvec2 { $$ = Type::bvec2Type; }
   | T_Bvec3 { $$ = Type::bvec3Type; }
-  | T_Bvec4 { $$ = Type::bec4Type; }
+  | T_Bvec4 { $$ = Type::bvec4Type; }
   | T_Ivec2 { $$ = Type::ivec2Type; }
   | T_Ivec3 { $$ = Type::ivec3Type; }
   | T_Ivec4 { $$ = Type::ivec4Type; }
@@ -425,13 +431,13 @@ simple_statement:
 ;
 
 compound_statement_with_scope:
-  T_LeftBrace T_RightBrace
-  | T_LeftBrace statement_list T_RightBrace
+T_LeftBrace T_RightBrace
+| T_LeftBrace statement_list T_RightBrace
 ;
 
 compound_statement_no_new_scope:
-  T_LeftBrace T_RightBrace
-  | T_LeftBrace statement_list T_RightBrace
+T_LeftBrace T_RightBrace
+| T_LeftBrace statement_list T_RightBrace
 ;
 
 statement_list:
@@ -460,7 +466,7 @@ condition:
 
 switch_statement:
   T_Switch T_LeftParen expression T_RightParen T_LeftBrace switch_statement_list
-  T_RightBrace
+ T_RightBrace
 ;
 
 switch_statement_list:
@@ -477,7 +483,7 @@ iteration_statement:
   T_While T_LeftParen condition T_RightParen statement_no_new_scope
   | T_Do statement_with_scope T_While T_LeftParen expression T_RightParen T_Semicolon
   | T_For T_LeftParen for_init_statement for_rest_statement T_RightParen
-	statement_no_new_scope
+ statement_no_new_scope
 ;
 
 for_init_statement:
