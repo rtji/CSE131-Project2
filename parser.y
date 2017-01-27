@@ -45,6 +45,10 @@ void yyerror(const char *msg); // standard error-handling routine
     char identifier[MaxIdentLen+1]; // +1 for terminating null
     Decl *decl;
     List<Decl*> *declList;
+
+    Identifier *id;
+    Expr *exp;
+    PostfixExpr postExp;
 }
 
 
@@ -87,6 +91,9 @@ void yyerror(const char *msg); // standard error-handling routine
  */
 %type <declList>  DeclList
 %type <decl>      declaration
+%type <id>        variable_identifier
+%type <exp>       primary_expression
+%type <postExp>   postfix_expression
 /*type<type> function_call */ 
 
 
@@ -227,7 +234,7 @@ shift_expression
 | relational_expression T_RightAngle shift_expression 
 | relational_expression T_LessEqual shift_expression 
 | relational_expression T_GreaterEqual shift_expression 
-                     ;
+;
 
 equality_expression: 
 relational_expression
