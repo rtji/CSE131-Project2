@@ -45,6 +45,8 @@ void yyerror(const char *msg); // standard error-handling routine
     char identifier[MaxIdentLen+1]; // +1 for terminating null
     Decl *decl;
     List<Decl*> *declList;
+		Type *type;
+		TypeQualifier *typeQualifier;
 }
 
 
@@ -87,8 +89,8 @@ void yyerror(const char *msg); // standard error-handling routine
  */
 %type <declList>  DeclList
 %type <decl>      declaration
-/*type<type> function_call */ 
-
+%type <integerConstant> primary_expression
+%type <identifier> variable_identifier
 
 
 %%
@@ -120,7 +122,7 @@ DeclList  :
 Decl:    
 T_Int T_Identifier T_Semicolon {
   // replace it with your implementation
-  Identifier *id = new Identifier(@2, $2);
+  Identifier *id = new Identifier(@2,$2);
   $$ = new VarDecl(id, Type::intType);
   }
 ;
@@ -128,13 +130,15 @@ T_Int T_Identifier T_Semicolon {
 
 
 variable_identifier: 
-  T_Identifier
+  T_Identifier { 
+	  Identifier *id = new Identifier(@1,$1); 
+		$$ = new Decl(id);
+	}
 ;
 
 primary_expression: 
-  variable_identifier
-  | T_IntConstant
-  | T_Uint // is dis right
+  variable_identifier { $$ = new Decl($1); } 
+  | T_IntConstant { $$ = new IntConstant(@1,$1); }
   | T_FloatConstant
   | T_BoolConstant
   | T_LeftParen expression T_RightParen      
@@ -281,8 +285,15 @@ constant_expression:
 ;
 
 declaration:
-  function_prototype T_Semicolon
-  | init_declarator_list T_Semicolon
+  function_prototype T_Semicolon {
+	  //Identifier *id = new Identifier(@2,$2);
+		//Holds parameters
+		//List<VarDecl*> *l = new List<VarDecl*>();
+		//TODO
+	}
+  | init_declarator_list T_Semicolon {
+	  
+	}
   | type_qualifier T_Identifier T_Semicolon
 ;
 
@@ -323,7 +334,10 @@ init_declarator_list:
 
 single_declaration:
   fully_specified_type
-  | fully_specified_type T_Identifier
+  | fully_specified_type T_Identifier {
+	  Identifier *id = new Identifier(@2,$2);
+	  $$ = new VarDecl(id,$1);
+	}
   | fully_specified_type T_Identifier array_specifier
   | fully_specified_type T_Identifier T_Equal initializer
 ;
@@ -350,7 +364,7 @@ storage_qualifier:
 ;
 
 type_specifier:
-  type_specifier_nonarray
+  type_specifier_nonarray { $$ = $1; }
   | type_specifier_nonarray array_specifier
 ;
 
@@ -359,26 +373,26 @@ array_specifier:
 ;
 
 type_specifier_nonarray:
-  T_Void
-  | T_Float
-  | T_Int
-  | T_Uint
-  | T_Bool
-  | T_Vec2
-  | T_Vec3
-  | T_Vec4
-  | T_Bvec2
-  | T_Bvec3
-  | T_Bvec4
-  | T_Ivec2
-  | T_Ivec3
-  | T_Ivec4
-  | T_Uvec2
-  | T_Uvec3
-  | T_Uvec4
-  | T_Mat2
-  | T_Mat3
-  | T_Mat4
+  T_Void { $$ = Type::voidType; }
+  | T_Float { $$ = Type::floatType; }
+  | T_Int { $$ = Type::intType; }
+  | T_Uint { $$ = Type::uintType; }
+  | T_Bool { $$ = Type::boolType; }
+  | T_Vec2 { $$ = Type::vec2Type; }
+  | T_Vec3 { $$ = Type::vec3Type; }
+  | T_Vec4 { $$ = Type::vec4Type; }
+  | T_Bvec2 { $$ = Type::bvec2Type; }
+  | T_Bvec3 { $$ = Type::bvec3Type; }
+  | T_Bvec4 { $$ = Type::bec4Type; }
+  | T_Ivec2 { $$ = Type::ivec2Type; }
+  | T_Ivec3 { $$ = Type::ivec3Type; }
+  | T_Ivec4 { $$ = Type::ivec4Type; }
+  | T_Uvec2 { $$ = Type::uvec2Type; }
+  | T_Uvec3 { $$ = Type::uvec3Type; }
+  | T_Uvec4 { $$ = Type::uvec4Type; }
+  | T_Mat2 { $$ = Type::mat2Type; }
+  | T_Mat3 { $$ = Type::mat3Type; }
+  | T_Mat4 { $$ = Type::mat4Type; }
 ;
 
 initializer:
