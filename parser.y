@@ -86,7 +86,7 @@ void yyerror(const char *msg); // standard error-handling routine
  * pp2: You'll need to add many of these of your own.
  */
 %type <declList>  DeclList
-%type <decl>      Decl
+%type <decl>      declaration
 /*type<type> function_call */ 
 
 
@@ -98,103 +98,128 @@ void yyerror(const char *msg); // standard error-handling routine
  * %% markers which delimit the Rules section.
 
  */
-Program   :    DeclList            {
-                                      @1;
-                                      /* pp2: The @1 is needed to convince
-                                       * yacc to set up yylloc. You can remove
-                                       * it once you have other uses of @n*/
-                                      Program *program = new Program($1);
-                                      // If no errors, advance to next phase
-                                      if (ReportError::NumErrors() == 0)
-                                          program->Print(0);
-                                   }
-          ;
 
-DeclList  :    DeclList Decl        { ($$=$1)->Append($2); }
-          |    Decl                 { ($$ = new List<Decl*>)->Append($1); }
-          ;
+Program:    
+  DeclList {
+    @1;
+    /* pp2: The @1 is needed to convince yacc to set up yylloc. You can remove
+     * it once you have other uses of @n */
+    Program *program = new Program($1);
+    // If no errors, advance to next phase
+    if (ReportError::NumErrors() == 0)
+      program->Print(0);
+  }
+;
 
-Decl      :    T_Int T_Identifier T_Semicolon {
-                                                 // replace it with your implementation
-                                                 Identifier *id = new Identifier(@2, $2);
-                                                 $$ = new VarDecl(id, Type::intType);
-                                              }
-          ;
+DeclList  :    
+  DeclList declaration { ($$=$1)->Append($2); }
+  | declaration { ($$ = new List<Decl*>)->Append($1); }
+;
 
-variable_identifier: T_Identifier
-                   ;
+/*
+Decl:    
+T_Int T_Identifier T_Semicolon {
+  // replace it with your implementation
+  Identifier *id = new Identifier(@2, $2);
+  $$ = new VarDecl(id, Type::intType);
+  }
+;
+*/
 
-primary_expression: variable_identifier
-                  | T_IntConstant
-                  | T_Uint // is dis right
-                  | T_FloatConstant
-                  | T_BoolConstant
-                  | T_LeftParen expression T_RightParen      
-                  ;
 
-postfix_expression: primary_expression
-                  | postfix_expression T_LeftBracket integer_expression T_RightBracket
-                  | function_call
-                  | postfix_expression
-                  | postfix_expression T_Dot T_FieldSelection // is this right
-                  | postfix_expression T_Inc
-                  | postfix_expression T_Dec
-                  ;       
+variable_identifier: 
+T_Identifier
+;
 
-integer_expression: expression {}
-                  ;
+primary_expression: 
+variable_identifier
+| T_IntConstant
+| T_Uint // is dis right
+| T_FloatConstant
+| T_BoolConstant
+| T_LeftParen expression T_RightParen      
+;
 
-function_call: function_call_or_method {/*actions*/}
-             ;
+postfix_expression: 
+primary_expression
+| postfix_expression T_LeftBracket integer_expression T_RightBracket
+| function_call
+| postfix_expression
+| postfix_expression T_Dot T_FieldSelection // is this right
+| postfix_expression T_Inc
+| postfix_expression T_Dec
+;       
 
-function_call_or_method: function_call_generic {}
-                       ;
+integer_expression: 
+expression {}
+;
 
-function_call_generic: function_call_header_with_parameters T_RightParen {}
-                     | function_call_header_no_parameters T_RightParen {}
-		                 ;
+function_call: 
+function_call_or_method {/*actions*/}
+;
 
-function_call_header_no_parameters: function_call_header T_Void
-                                  | function_call_header
-                                  ;
+function_call_or_method: 
+function_call_generic {}
+;
 
-function_call_header_with_parameters: function_call_header assignment_expression
-                                    | function_call_header_with_parameters T_Comma assignment_expression
-                                    ;
+function_call_generic: 
+function_call_header_with_parameters T_RightParen {}
+| function_call_header_no_parameters T_RightParen {}
+;
 
-function_call_header: function_identifier T_LeftParen {}
+function_call_header_no_parameters: 
+function_call_header T_Void
+| function_call_header
+;
 
-function_identifier: type_specifier
-                   | postfix_expression
-                   ;
+function_call_header_with_parameters: 
+function_call_header assignment_expression
+| function_call_header_with_parameters T_Comma assignment_expression
+;
 
-unary_expression: postfix_expression
-                | T_Inc unary_expression
-                | T_Dec unary_expression
-                | unary_operator unary_expression
+function_call_header: 
+function_identifier T_LeftParen {}
+;
 
-unary_operator: T_Plus
-              | T_Dash
-              ;
+function_identifier: 
+type_specifier
+| postfix_expression
+;
 
-multiplicative_expression: unary_expression
-                         | multiplicative_expression T_Star unary_expression
-                         | multiplicative_expression T_Slash unary_expression
-                         ;
+unary_expression: 
+postfix_expression
+| T_Inc unary_expression
+| T_Dec unary_expression
+| unary_operator unary_expression
+;
 
-additive_expression: multiplicative_expression
-                   | additive_expression T_Plus multiplicative_expression
-                   | additive_expression T_Dash multiplicative_expression  
-                   ;
+unary_operator: 
+T_Plus
+| T_Dash
+;
 
-shift_expression: additive_expression
-                ;
+multiplicative_expression: 
+unary_expression
+| multiplicative_expression T_Star unary_expression
+| multiplicative_expression T_Slash unary_expression
+;
 
-relational_expression: shift_expression
-                     | relational_expression T_LeftAngle shift_expression    
-                     | relational_expression T_RightAngle shift_expression 
-                     | relational_expression T_LessEqual shift_expression 
-                     | relational_expression T_GreaterEqual shift_expression 
+additive_expression: 
+multiplicative_expression
+| additive_expression T_Plus multiplicative_expression
+| additive_expression T_Dash multiplicative_expression  
+;
+
+shift_expression: 
+additive_expression
+;
+
+relational_expression: 
+shift_expression
+| relational_expression T_LeftAngle shift_expression    
+| relational_expression T_RightAngle shift_expression 
+| relational_expression T_LessEqual shift_expression 
+| relational_expression T_GreaterEqual shift_expression 
                      ;
 
 equality_expression: 
