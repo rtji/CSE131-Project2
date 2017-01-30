@@ -167,7 +167,7 @@ integer_expression:
 ;
 
 function_call: 
-  function_call_or_method {/*actions*/}
+  function_call_or_method {}
 ;
 
 function_call_or_method: 
