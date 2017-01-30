@@ -48,7 +48,9 @@ void yyerror(const char *msg); // standard error-handling routine
 
     Identifier *id;
     Expr *exp;
-    PostfixExpr postExp;
+    PostfixExpr *postExp;
+		Call *call;
+		Stmt *stmt;
 }
 
 
@@ -94,6 +96,71 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <id>        variable_identifier
 %type <exp>       primary_expression
 %type <postExp>   postfix_expression
+%type <>					integer_expression
+%type <call>			function_call
+%type <call>			function_call_or_method
+%type <call>			function_generic
+%type <call>			function_call_header_no_parameters
+%type <call>			function_call_header_with_parameters
+%type <call>			function_call_header
+%type <id>				function_identifier
+%type <>					unary_expression
+%type <>					unary_operator
+%type <>					multiplicative_expression
+%type <>					additive_expression
+%type <>					shift_expression
+%type <>					relational_expression
+%type <>					equality_expression
+%type <>					and_expression
+%type <>					exclusive_or_expression
+%type <>					inclusive_or_expression
+%type <>					logical_and_expression
+%type <>					logical_xor_expression
+%type <>					logical_or_expression
+%type <>					conditional_expression
+%type <>					assignment_expression
+%type <>					assignment_operator
+%type <>					expression
+%type <>					constant_expression
+%type <>					function_prototype
+%type <>					function_declarator
+%type <>					function_header
+%type <>					function_header_with_parameters
+%type <>					parameter_declarator
+%type <>					parameter_declaration
+%type <>					parameter_type_specifier
+%type <>					init_declarator_list
+%type <>					single_declaration
+%type <>					fully_specified_type
+%type <>					type_qualifier
+%type <>					single_type_qualifier
+%type <>					storage_qualifier
+%type <>					type_specifier
+%type <>					array_specifier
+%type <>					type_specifier_nonarray
+%type <>					initializer
+%type <>					declaration_statement
+%type <stmt>			statement
+%type <stmt>			statement_no_new_scope
+%type <stmt>			statement_with_scope
+%type <stmt>			simple_statement
+%type <>					compound_statement_no_new_scope
+%type <>					statement_list
+%type <>					expression_statement
+%type <>					selection_statement
+%type <>					selection_rest_statemtnt
+%type <>					condition
+%type <>					switch_statement
+%type <>					switch_statement_list
+%type <>					case_label
+%type <>					iteration_statement
+%type <>					for_init_statement
+%type <>					conditionopt
+%type <>					for_rest_statement
+%type <>					jump_statement
+%type <>					translation_unit
+%type <>					external_declaration
+%type <>					function_definition
 /*type<type> function_call */ 
 
 
@@ -304,7 +371,7 @@ declaration:
 ;
 
 function_prototype:
-function_declarator T_RightParen
+  function_declarator T_RightParen
 ;
 
 function_declarator:
