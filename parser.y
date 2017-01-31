@@ -45,10 +45,11 @@ void yyerror(const char *msg); // standard error-handling routine
     char identifier[MaxIdentLen+1]; // +1 for terminating null
     Decl *decl;
     List<Decl*> *declList;
-    VarDecl *varDecl;
+    //VarDecl *varDecl;
     Type *type;
-    FnDecl *funDecl;
+    //FnDecl *funDecl;
     Expr *exp;
+		Stmt *stmt;
 }
 
 
@@ -91,12 +92,13 @@ void yyerror(const char *msg); // standard error-handling routine
  */
 %type <declList>  DeclList
 %type <decl>      declaration
-%type <varDecl>   singleDecl
+%type <decl>   		singleDecl
 // singleDecl is name, varDecl is type
 %type <type>      Type
-%type <funDecl>   functionDecl
-%type <exp>       primaryExp
-
+%type <decl>   		functionDecl
+%type <exp>       primaryExp 
+%type <exp>				assignmentExp
+%type <stmt>			statements
 
 
 %%
@@ -148,28 +150,37 @@ singleDecl:
   Type T_Identifier T_Equal primaryExp T_Semicolon {
     Identifier *id = new Identifier (@2, $2);
     $$ = new VarDecl (id, $1, $4);
-  }|
+  }//|
 
-  T_Identifier T_Equal primaryExp T_Semicolon {
-    $$ = new AssignExpr ($3, T_Equal, $3);
-  }
+  //Probably goes under assignment not declaration
+  /*T_Identifier T_Equal primaryExp T_Semicolon {
+    Identifier *id = new Identifier (@1, $1);
+		$$ = new VarDecl (id, $3);
+		//$$ = new AssignExpr ($3, T_Equal, $3);
+  }*/
 ;
 
 functionDecl:
-
-  Type T_Identifier T_LeftBrace T_RightBrace {
+  Type T_Identifier T_LeftParen T_RightParen T_LeftBrace T_RightBrace {
     Identifier *id = new Identifier (@2, $2);
-    $$ = new FnDecl (id, $1, new List<VarDecl*>);
+    FnDecl *fn = new FnDecl (id, $1, new List<VarDecl*>);
+		fn->SetFunctionBody(new StmtBlock(new List<VarDecl*>, new List<Stmt*>));
+		$$ = fn;
   } 
 
 /*
   Type T_Identifier T_LeftParen T_RightParen T_LeftBrace statements T_RightBrace {
     Identifier *id = new Identifier (@2, $2);
-    $$ = new FnDecl (id, $1, new List<VarDecl*>);
-  }
-*/
+		FnDecl *fn = new FnDecl(id, $1, new List<VarDecl*>);
+		fn->SetFunctionBody($6);
+		$$ = fn;
+	  //StmtBlock *body = new StmtBlock(new List<VarDecl*>, new List<Stmt*>);
+  }*/
 ;
 
+assignmentExp:
+  T_Identifier T_Equal primaryExp T_Semicolon { $$ = new AssignExpr($1, T_Equal, $3); }
+;
 
 Type:
   T_Void { $$ = Type::voidType; }
@@ -196,18 +207,22 @@ Type:
 
 
 primaryExp:
-  | T_IntConstant { $$ = new IntConstant(@1,$1); }
+  T_IntConstant { $$ = new IntConstant(@1,$1); }
   | T_FloatConstant { $$ = new FloatConstant(@1,$1); }
   | T_BoolConstant { $$ = new BoolConstant(@1,$1); }
 ;
 
 
-/*
+
 statements: 
-  singleDecl { $$ = $1; } |
-  statements 
+  assignmentExp { 
+		List<Stmt*> *statements = new List<Stmt*>;
+		statements->add($1);
+	  $$ = new StmtBlock(new List<VarDecl*> *decls, statements);
+	}
+  | statements 
 ;
-*/
+
 
 %%
 
