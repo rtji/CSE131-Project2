@@ -1,1 +1,21 @@
+void hello;
 int x;
+float y;
+bool isTrue;
+uint z;
+vec2 someVec;
+vec4 otherVec;
+vec3 thirdVec;
+bvec2 a;
+bvec3 b;
+bvec4 c;
+ivec2 d;
+ivec3 e;
+ivec4 f;
+uvec2 alica;
+uvec3 jacob;
+uvec4 bri;
+mat2 matt;
+mat3 matthew;
+mat4 matty;
+
