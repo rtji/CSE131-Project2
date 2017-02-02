@@ -50,6 +50,7 @@ void yyerror(const char *msg); // standard error-handling routine
     //FnDecl *funDecl;
     Expr *exp;
 		Stmt *stmt;
+		Operator *op;
 }
 
 
@@ -95,10 +96,10 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <decl>   		singleDecl
 // singleDecl is name, varDecl is type
 %type <type>      Type
-%type <decl>   		functionDecl
-%type <exp>       primaryExp 
-%type <exp>				assignmentExp
-%type <stmt>			statements
+%type <decl>      functionDecl
+%type <exp>       primaryExpr
+%type <exp>       assignmentExpr
+%type <stmt>      statements
 
 
 %%
@@ -145,19 +146,12 @@ singleDecl:
   Type T_Identifier T_Semicolon {
     Identifier *id = new Identifier (@2, $2);
     $$ = new VarDecl (id, $1);
-  }|
+  }
 
-  Type T_Identifier T_Equal primaryExp T_Semicolon {
+  | Type T_Identifier T_Equal primaryExpr T_Semicolon {
     Identifier *id = new Identifier (@2, $2);
     $$ = new VarDecl (id, $1, $4);
-  }//|
-
-  //Probably goes under assignment not declaration
-  /*T_Identifier T_Equal primaryExp T_Semicolon {
-    Identifier *id = new Identifier (@1, $1);
-		$$ = new VarDecl (id, $3);
-		//$$ = new AssignExpr ($3, T_Equal, $3);
-  }*/
+  }
 ;
 
 functionDecl:
@@ -168,18 +162,21 @@ functionDecl:
 		$$ = fn;
   } 
 
-/*
-  Type T_Identifier T_LeftParen T_RightParen T_LeftBrace statements T_RightBrace {
+  | Type T_Identifier T_LeftParen T_RightParen T_LeftBrace statements T_RightBrace 
+	{
     Identifier *id = new Identifier (@2, $2);
 		FnDecl *fn = new FnDecl(id, $1, new List<VarDecl*>);
 		fn->SetFunctionBody($6);
 		$$ = fn;
-	  //StmtBlock *body = new StmtBlock(new List<VarDecl*>, new List<Stmt*>);
-  }*/
+  }
 ;
 
-assignmentExp:
-  T_Identifier T_Equal primaryExp T_Semicolon { $$ = new AssignExpr($1, T_Equal, $3); }
+assignmentExpr:
+  T_Identifier T_Equal primaryExpr T_Semicolon { 
+	  Identifier *id = new Identifier(@1, $1);
+		Operator *op = new Operator(@2, "=");
+	  $$ = new AssignExpr(new VarExpr(@1, id), op, $3); 
+	}
 ;
 
 Type:
@@ -206,7 +203,7 @@ Type:
 ;
 
 
-primaryExp:
+primaryExpr:
   T_IntConstant { $$ = new IntConstant(@1,$1); }
   | T_FloatConstant { $$ = new FloatConstant(@1,$1); }
   | T_BoolConstant { $$ = new BoolConstant(@1,$1); }
@@ -215,10 +212,16 @@ primaryExp:
 
 
 statements: 
-  assignmentExp { 
+  assignmentExpr statements { 
 		List<Stmt*> *statements = new List<Stmt*>;
-		statements->add($1);
-	  $$ = new StmtBlock(new List<VarDecl*> *decls, statements);
+		statements->Append($1);
+		statements->Append($2);
+	  $$ = new StmtBlock(new List<VarDecl*>, statements);
+	}
+	| assignmentExpr {
+		List<Stmt*> *statements = new List<Stmt*>;
+		statements->Append($1);
+	  $$ = new StmtBlock(new List<VarDecl*>, statements);
 	}
   | statements 
 ;
