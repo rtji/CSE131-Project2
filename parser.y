@@ -45,8 +45,10 @@ void yyerror(const char *msg); // standard error-handling routine
     float floatConstant;
     char identifier[MaxIdentLen+1]; // +1 for terminating null
     Decl *decl;
+		VarDecl *varDecl;
 		FnDecl *fnDecl;
     List<Decl*> *declList;
+		List<VarDecl*> *vDeclList;
 		List<Stmt*> *stmtList;
 
     Identifier *id;
@@ -121,7 +123,7 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <fnDecl>		function_header
 %type <fnDecl>		function_header_with_parameters
 %type <decl>			parameter_declaration
-%type <decl>			single_declaration
+%type <varDecl>		single_declaration
 %type <typeQual>	type_qualifier
 %type <type>			type_specifier
 %type <exp>				array_specifier
@@ -133,6 +135,7 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <stmt>			simple_statement
 %type <stmt>			compound_statement_with_scope
 %type <stmt>			compound_statement_no_new_scope
+%type <vDeclList>	var_decl_list
 %type <stmtList>	statement_list
 %type <stmt>			expression_statement
 %type <stmt>			selection_statement
@@ -362,7 +365,6 @@ declaration:
   function_prototype T_Semicolon { $$ = $1;	}
 	| function_definition { $$ = $1; }
   | single_declaration T_Semicolon { $$ = $1; }
-  | type_qualifier T_Identifier T_Semicolon
 ;
 
 function_prototype:
@@ -400,13 +402,18 @@ parameter_declaration:
 single_declaration:
   type_specifier T_Identifier {
 	  Identifier *id = new Identifier(@2,$2);
+		printf("single_dec");
 	  $$ = new VarDecl(id,$1);
 	}
 	| type_qualifier type_specifier T_Identifier {
 	  Identifier *id = new Identifier(@3, $3);
 		$$ = new VarDecl(id, $2, $1);
 	}
-  | type_specifier T_Identifier array_specifier
+  | type_specifier T_Identifier array_specifier {
+	  Identifier *id = new Identifier(@2, $2);
+		ArrayType *type = new ArrayType(@1, $1);
+		$$ = new VarDecl(id, type);
+	}
 	| type_qualifier type_specifier T_Identifier array_specifier
   | type_specifier T_Identifier T_Equal assignment_expression
 	| type_qualifier type_specifier T_Identifier T_Equal assignment_expression
@@ -421,11 +428,13 @@ type_qualifier:
 
 type_specifier:
   type_specifier_nonarray { $$ = $1; }
-  | type_specifier_nonarray array_specifier
+  | type_specifier_nonarray array_specifier {
+	  $$ = new ArrayType(@1, $1);
+	}
 ;
 
 array_specifier:
-  T_LeftBracket conditional_expression T_RightBracket
+  T_LeftBracket conditional_expression T_RightBracket { $$ = $2; }
 ;
 
 type_specifier_nonarray:
@@ -484,7 +493,15 @@ compound_statement_with_scope:
   T_LeftBrace T_RightBrace {
 	  $$ = new StmtBlock(new List<VarDecl*>, new List<Stmt*>);
 	}
-  | T_LeftBrace statement_list T_RightBrace
+  | T_LeftBrace statement_list T_RightBrace /*{
+	  $$ = new StmtBlock(new List<VarDecl*>, $2);
+	}
+	| T_LeftBrace var_decl_list T_RightBrace {
+	  $$ = new StmtBlock($2, new List<Stmt*>);
+	}
+	| T_LeftBrace var_decl_list statement_list T_RightBrace {
+	  $$ = new StmtBlock($2, $3);
+	}*/
 ;
 
 compound_statement_no_new_scope:
@@ -494,7 +511,19 @@ compound_statement_no_new_scope:
   | T_LeftBrace statement_list T_RightBrace {
 	  $$ = new StmtBlock(new List<VarDecl*>, $2);
 	}
+	| T_LeftBrace var_decl_list T_RightBrace {
+	  printf("comp_stmt_no_scope");
+	  $$ = new StmtBlock($2, new List<Stmt*>);
+	}
+	| T_LeftBrace var_decl_list statement_list T_RightBrace {
+	  printf("comp_stmt_no_scope1");
+	  $$ = new StmtBlock($2, $3);
+	}
 ;
+
+var_decl_list:
+  single_declaration { ($$ = new List<VarDecl*>)->Append($1); }
+	| var_decl_list single_declaration { ($$ = $1)->Append($2); }
 
 statement_list:
   statement { ($$ = new List<Stmt*>)->Append($1); }
@@ -508,7 +537,7 @@ expression_statement:
 
 selection_statement:
   T_If T_LeftParen assignment_expression T_RightParen statement_with_scope {
-	  $$ = new ConditionalStmt($3, $5);
+	  //$$ = new ConditionalStmt($3, $5);
 	}
 	| T_If T_LeftParen assignment_expression T_RightParen statement_with_scope T_Else statement_with_scope {
 	  $$ = new IfStmt($3, $5, $7);
@@ -574,8 +603,8 @@ external_declaration:
 
 function_definition:
   function_prototype compound_statement_no_new_scope {
-	  $1->SetFunctionBody($2);
-		$$ = $1;
+	  printf("func_def");
+	  ($$=$1)->SetFunctionBody($2);
 	}
 ;
 
