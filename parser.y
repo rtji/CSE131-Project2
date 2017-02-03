@@ -80,7 +80,7 @@ void yyerror(const char *msg); // standard error-handling routine
 %token   T_Dash T_Plus T_Star T_Slash
 %token   T_LeftParen T_RightParen T_LeftBracket T_RightBracket T_LeftBrace T_RightBrace
 
-%token   <identifier> T_Identifier T_FieldSelection
+%token   <identifier> T_Identifier
 %token   <integerConstant> T_IntConstant
 %token   <floatConstant> T_FloatConstant
 %token   <boolConstant> T_BoolConstant
@@ -136,10 +136,8 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <stmtList>	statement_list
 %type <stmt>			expression_statement
 %type <stmt>			selection_statement
-%type <stmt>			selection_rest_statement
 %type <exp>				condition
 %type <stmt>			switch_statement
-%type <stmtList>	switch_statement_list
 %type <exp>				case_label
 %type <stmt>			iteration_statement
 %type <stmt>			for_init_statement
@@ -210,7 +208,7 @@ postfix_expression:
   | postfix_expression T_LeftBracket assignment_expression T_RightBracket
   | function_call_generic { $$ = $1; }
   | postfix_expression { $$ = $1; }
-  | postfix_expression T_Dot T_FieldSelection {
+  | postfix_expression T_Dot T_Identifier {
 	  $$ = new FieldAccess($1, new Identifier(@3,$3));
 	}
   | postfix_expression T_Inc { 
@@ -499,16 +497,8 @@ compound_statement_no_new_scope:
 ;
 
 statement_list:
-  statement {
-	  List<Stmt*> *list = new List<Stmt*>();
-		list->Append($1);
-		$$ = list;
-	}
-  | statement_list statement {
-	  List<Stmt*> *list = $1;
-		list->Append($2);
-		$$ = list;
-	}
+  statement { ($$ = new List<Stmt*>)->Append($1); }
+  | statement_list statement { ($$=$1)->Append($2); }
 ;
 
 expression_statement:
@@ -517,12 +507,12 @@ expression_statement:
 ;
 
 selection_statement:
-  T_If T_LeftParen assignment_expression T_RightParen selection_rest_statement
-;
-
-selection_rest_statement:
-  statement_with_scope T_Else statement_with_scope
-  | statement_with_scope { $$ = $1; }
+  T_If T_LeftParen assignment_expression T_RightParen statement_with_scope {
+	  $$ = new ConditionalStmt($3, $5);
+	}
+	| T_If T_LeftParen assignment_expression T_RightParen statement_with_scope T_Else statement_with_scope {
+	  $$ = new IfStmt($3, $5, $7);
+	}
 ;
 
 condition:
@@ -532,13 +522,7 @@ condition:
 ;
 
 switch_statement:
-  T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace switch_statement_list
- T_RightBrace
-;
-
-switch_statement_list:
-/* nothing */
-  statement_list { $$ = $1; }
+  T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace statement_list T_RightBrace
 ;
 
 case_label:
@@ -547,8 +531,12 @@ case_label:
 ;
 
 iteration_statement:
-  T_While T_LeftParen condition T_RightParen statement_no_new_scope
-  | T_Do statement_with_scope T_While T_LeftParen assignment_expression T_RightParen T_Semicolon
+  T_While T_LeftParen condition T_RightParen statement_no_new_scope {
+	  $$ = new WhileStmt($3, $5);
+	}
+  | T_Do statement_with_scope T_While T_LeftParen assignment_expression T_RightParen T_Semicolon {
+	  $$ = new DoWhileStmt($2, $5);
+	}
   | T_For T_LeftParen for_init_statement for_rest_statement T_RightParen
  statement_no_new_scope
 ;
@@ -569,10 +557,9 @@ for_rest_statement:
 ;
 
 jump_statement:
-  T_Continue T_Semicolon
-  | T_Break T_Semicolon
-  | T_Return T_Semicolon
-  | T_Return assignment_expression T_Semicolon
+  T_Break T_Semicolon { $$ = new BreakStmt(@1); }
+  | T_Return T_Semicolon { $$ = new ReturnStmt(@1, new EmptyExpr); }
+  | T_Return assignment_expression T_Semicolon { $$ = new ReturnStmt(@1, $2); }
 ;
 
 translation_unit:
