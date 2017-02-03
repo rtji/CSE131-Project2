@@ -208,7 +208,9 @@ primary_expression:
 
 postfix_expression: 
   primary_expression { $$ = $1; }
-  | postfix_expression T_LeftBracket assignment_expression T_RightBracket
+  | postfix_expression T_LeftBracket assignment_expression T_RightBracket {
+	  $$ = new ArrayAccess(@1, $1, $3);
+	}
   | function_call_generic { $$ = $1; }
   | postfix_expression { $$ = $1; }
   | postfix_expression T_Dot T_Identifier {
@@ -364,7 +366,7 @@ assignment_operator:
 declaration:
   function_prototype T_Semicolon { $$ = $1;	}
 	| function_definition { $$ = $1; }
-  | single_declaration T_Semicolon { $$ = $1; }
+  | single_declaration T_Semicolon { $$ = new VarDecl(*$1); }
 ;
 
 function_prototype:
@@ -414,9 +416,19 @@ single_declaration:
 		ArrayType *type = new ArrayType(@1, $1);
 		$$ = new VarDecl(id, type);
 	}
-	| type_qualifier type_specifier T_Identifier array_specifier
-  | type_specifier T_Identifier T_Equal assignment_expression
-	| type_qualifier type_specifier T_Identifier T_Equal assignment_expression
+	| type_qualifier type_specifier T_Identifier array_specifier {
+	  Identifier *id = new Identifier (@3, $3);
+		ArrayType *type = new ArrayType(@2, $2);
+		$$ = new VarDecl(id, type, $1);
+	}
+  | type_specifier T_Identifier T_Equal assignment_expression {
+	  Identifier *id = new Identifier (@2, $2);
+		$$ = new VarDecl(id, $1, $4);
+	}
+	| type_qualifier type_specifier T_Identifier T_Equal assignment_expression {
+	  Identifier *id = new Identifier (@3, $3);
+		$$ = new VarDecl(id, $2, $1, $5);
+	}
 ;
 
 type_qualifier:
@@ -427,7 +439,7 @@ type_qualifier:
 ;
 
 type_specifier:
-  type_specifier_nonarray { $$ = $1; }
+  type_specifier_nonarray { $$ = new Type(*$1); }
   | type_specifier_nonarray array_specifier {
 	  $$ = new ArrayType(@1, $1);
 	}
@@ -493,7 +505,7 @@ compound_statement_with_scope:
   T_LeftBrace T_RightBrace {
 	  $$ = new StmtBlock(new List<VarDecl*>, new List<Stmt*>);
 	}
-  | T_LeftBrace statement_list T_RightBrace /*{
+  | T_LeftBrace statement_list T_RightBrace {
 	  $$ = new StmtBlock(new List<VarDecl*>, $2);
 	}
 	| T_LeftBrace var_decl_list T_RightBrace {
@@ -501,7 +513,7 @@ compound_statement_with_scope:
 	}
 	| T_LeftBrace var_decl_list statement_list T_RightBrace {
 	  $$ = new StmtBlock($2, $3);
-	}*/
+	}
 ;
 
 compound_statement_no_new_scope:
@@ -531,13 +543,13 @@ statement_list:
 ;
 
 expression_statement:
-  T_Semicolon
+  T_Semicolon { $$ = new EmptyExpr(); }
   | assignment_expression T_Semicolon
 ;
 
 selection_statement:
   T_If T_LeftParen assignment_expression T_RightParen statement_with_scope {
-	  //$$ = new ConditionalStmt($3, $5);
+	  $$ = new IfStmt($3, $5, new EmptyExpr);
 	}
 	| T_If T_LeftParen assignment_expression T_RightParen statement_with_scope T_Else statement_with_scope {
 	  $$ = new IfStmt($3, $5, $7);
