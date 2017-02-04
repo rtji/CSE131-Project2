@@ -523,18 +523,24 @@ compound_statement_no_new_scope:
 	  $$ = new StmtBlock(new List<VarDecl*>, $2);
 	}
 	| T_LeftBrace var_decl_list T_RightBrace {
-	  printf("comp_stmt_no_scope");
+	  /* printf("comp_stmt_no_scope"); */ 
 	  $$ = new StmtBlock($2, new List<Stmt*>);
 	}
 	| T_LeftBrace var_decl_list statement_list T_RightBrace {
-	  printf("comp_stmt_no_scope1");
+	  /* EmptyE("comp_stmt_no_scope1"); */ 
 	  $$ = new StmtBlock($2, $3);
 	}
 ;
 
 var_decl_list:
-  single_declaration { ($$ = new List<VarDecl*>)->Append($1); }
+  single_declaration { 
+    ($$ = new List<VarDecl*>)->Append($1);
+  }
 	| var_decl_list single_declaration { ($$ = $1)->Append($2); }
+
+  /*
+  declaration { ($$ = new List<Decl*>)->Append($1);
+    */
 
 statement_list:
   statement { ($$ = new List<Stmt*>)->Append($1); }
@@ -548,7 +554,7 @@ expression_statement:
 
 selection_statement:
   T_If T_LeftParen assignment_expression T_RightParen statement_with_scope {
-	  $$ = new IfStmt($3, $5, new EmptyExpr);
+	  $$ = new IfStmt($3, $5, new EmptyExpr());
 	}
 	| T_If T_LeftParen assignment_expression T_RightParen statement_with_scope T_Else statement_with_scope {
 	  $$ = new IfStmt($3, $5, $7);
