@@ -212,7 +212,6 @@ postfix_expression:
 	  $$ = new ArrayAccess(@1, $1, $3);
 	}
   | function_call_generic { $$ = $1; }
-  | postfix_expression { $$ = $1; }
   | postfix_expression T_Dot T_Identifier {
 	  $$ = new FieldAccess($1, new Identifier(@3,$3));
 	}
@@ -420,7 +419,7 @@ single_declaration:
 		ArrayType *type = new ArrayType(@2, $2);
 		$$ = new VarDecl(id, type, $1);
 	}
-  | type_specifier T_Identifier T_Equal postfix_expression {
+  | type_specifier T_Identifier T_Equal assignment_expression {
     /* assignment expression */ 
 	  Identifier *id = new Identifier (@2, $2);
 		$$ = new VarDecl(id, $1, $4);
@@ -615,7 +614,6 @@ external_declaration:
 
 function_definition:
   function_prototype compound_statement_no_new_scope {
-	  printf("func_def");
 	  ($$=$1)->SetFunctionBody($2);
 	}
 ;
