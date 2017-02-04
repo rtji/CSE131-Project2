@@ -420,7 +420,8 @@ single_declaration:
 		ArrayType *type = new ArrayType(@2, $2);
 		$$ = new VarDecl(id, type, $1);
 	}
-  | type_specifier T_Identifier T_Equal assignment_expression {
+  | type_specifier T_Identifier T_Equal postfix_expression {
+    /* assignment expression */ 
 	  Identifier *id = new Identifier (@2, $2);
 		$$ = new VarDecl(id, $1, $4);
 	}
