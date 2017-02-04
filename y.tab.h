@@ -108,10 +108,9 @@
      T_LeftBrace = 324,
      T_RightBrace = 325,
      T_Identifier = 326,
-     T_FieldSelection = 327,
-     T_IntConstant = 328,
-     T_FloatConstant = 329,
-     T_BoolConstant = 330
+     T_IntConstant = 327,
+     T_FloatConstant = 328,
+     T_BoolConstant = 329
    };
 #endif
 /* Tokens.  */
@@ -184,10 +183,9 @@
 #define T_LeftBrace 324
 #define T_RightBrace 325
 #define T_Identifier 326
-#define T_FieldSelection 327
-#define T_IntConstant 328
-#define T_FloatConstant 329
-#define T_BoolConstant 330
+#define T_IntConstant 327
+#define T_FloatConstant 328
+#define T_BoolConstant 329
 
 
 
@@ -197,19 +195,31 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 41 "parser.y"
+#line 42 "parser.y"
 
     int integerConstant;
     bool boolConstant;
     float floatConstant;
     char identifier[MaxIdentLen+1]; // +1 for terminating null
     Decl *decl;
+		VarDecl *varDecl;
+		FnDecl *fnDecl;
     List<Decl*> *declList;
+		List<VarDecl*> *vDeclList;
+		List<Stmt*> *stmtList;
+
+    Identifier *id;
+    Expr *exp;
+		Call *call;
+		Stmt *stmt;
+		Type *type;
+		TypeQualifier *typeQual;
+		Operator *op;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 213 "y.tab.h"
+#line 223 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

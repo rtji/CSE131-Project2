@@ -197,9 +197,9 @@ T_Int T_Identifier T_Semicolon {
 
 primary_expression: 
   T_Identifier { 
-	  Identifier *id = new Identifier(@1, $1);
-	  $$ = new VarExpr(@1, id); 
-	} 
+    Identifier *id = new Identifier(@1, $1);
+    $$ = new VarExpr(@1, id); 
+  } 
   | T_IntConstant { $$ = new IntConstant(@1,$1); }
   | T_FloatConstant { $$ = new FloatConstant(@1,$1); }
   | T_BoolConstant { $$ = new BoolConstant(@1,$1); }
@@ -349,8 +349,8 @@ conditional_expression:
 assignment_expression:
   conditional_expression { $$ = $1; }
   | unary_expression assignment_operator assignment_expression {
-	  $$ = new AssignExpr($1, $2, $3);
-	}
+    $$ = new AssignExpr($1, $2, $3);
+  }
 ;
 
 assignment_operator:
@@ -401,22 +401,31 @@ parameter_declaration:
 
 single_declaration:
   type_specifier T_Identifier {
-	  Identifier *id = new Identifier(@2,$2);
-		printf("single_dec");
-	  $$ = new VarDecl(id,$1);
-	}
-	| type_qualifier type_specifier T_Identifier {
-	  Identifier *id = new Identifier(@3, $3);
-		$$ = new VarDecl(id, $2, $1);
-	}
+    Identifier *id = new Identifier(@2,$2);
+    $$ = new VarDecl(id,$1);
+  }
+  | type_qualifier type_specifier T_Identifier {
+    Identifier *id = new Identifier(@3, $3);
+    $$ = new VarDecl(id, $2, $1);
+  }
   | type_specifier T_Identifier array_specifier {
-	  Identifier *id = new Identifier(@2, $2);
-		ArrayType *type = new ArrayType(@1, $1);
-		$$ = new VarDecl(id, type);
-	}
-	| type_qualifier type_specifier T_Identifier array_specifier
-  | type_specifier T_Identifier T_Equal assignment_expression
-	| type_qualifier type_specifier T_Identifier T_Equal assignment_expression
+    Identifier *id = new Identifier(@2, $2);
+    ArrayType *type = new ArrayType(@1, $1);
+    $$ = new VarDecl(id, type);
+  }
+  /*
+  | type_qualifier type_specifier T_Identifier array_specifier {
+  
+  }
+  */
+  | type_specifier T_Identifier T_Equal assignment_expression {
+    /* original was assignment_expression instead of primary_expression */ 
+    Identifier *id = new Identifier (@2, $2);
+    $$ = new VarDecl (id, $1, $4);
+  }
+  /*
+  | type_qualifier type_specifier T_Identifier T_Equal assignment_expression
+  */
 ;
 
 type_qualifier:
@@ -546,8 +555,8 @@ selection_statement:
 
 condition:
   assignment_expression { $$ = $1; }
-  | type_specifier T_Identifier T_Equal assignment_expression
-	| type_qualifier type_specifier T_Identifier T_Equal assignment_expression
+  | type_specifier T_Identifier T_Equal assignment_expression {}
+  | type_qualifier type_specifier T_Identifier T_Equal assignment_expression
 ;
 
 switch_statement:
