@@ -100,12 +100,11 @@ void yyerror(const char *msg); // standard error-handling routine
  */
 %type <declList>  DeclList
 %type <decl>      declaration
-%type <exp>       primary_expression
-%type <exp>       postfix_expression
-%type <call>			function_call_generic
-%type <call>			function_call_header_no_parameters
-%type <call>			function_call_header_with_parameters
-%type <call>			function_call_header
+%type <exp>       primary_expression postfix_expression
+%type <call>			function_call_generic 
+%type <call>      function_call_header_no_parameters 
+%type <call>      function_call_header_with_parameters
+%type <call>      function_call_header
 %type <id>				function_identifier
 %type <exp>				unary_expression
 %type <op>				unary_operator
@@ -130,11 +129,8 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <type>			type_specifier_nonarray
 %type <stmt>			declaration_statement
 %type <stmt>			statement
-%type <stmt>			statement_no_new_scope
-%type <stmt>			statement_with_scope
 %type <stmt>			simple_statement
-%type <stmt>			compound_statement_with_scope
-%type <stmt>			compound_statement_no_new_scope
+%type <stmt>			compound_statement
 %type <vDeclList>	var_decl_list
 %type <stmtList>	statement_list
 %type <stmt>			expression_statement
@@ -150,7 +146,6 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <decl>			translation_unit
 %type <decl>			external_declaration
 %type <fnDecl>		function_definition
-/*type<type> function_call */ 
 
 
 %%
@@ -176,24 +171,6 @@ DeclList  :
   DeclList declaration { ($$=$1)->Append($2); }
   | declaration { ($$ = new List<Decl*>)->Append($1); }
 ;
-
-/*
-  ($$=$1)->Append($2);
-
-  List<Decl*> list = $1
-  list->Append($2)
-  $$=list
-*/
-
-/*
-Decl:    
-T_Int T_Identifier T_Semicolon {
-  // replace it with your implementation
-  Identifier *id = new Identifier(@2, $2);
-  $$ = new VarDecl(id, Type::intType);
-  }
-;
-*/ 
 
 primary_expression: 
   T_Identifier { 
@@ -236,8 +213,8 @@ function_call_header_no_parameters:
 ;
 
 function_call_header_with_parameters: 
-  function_call_header assignment_expression
-  | function_call_header_with_parameters T_Comma assignment_expression
+  function_call_header assignment_expression {}
+  | function_call_header_with_parameters T_Comma assignment_expression {}
 ;
 
 function_call_header: 
@@ -245,7 +222,10 @@ function_call_header:
 ;
 
 function_identifier: 
-  //postfix_expression { $$ = $1; }
+  /*
+  type_specifier {}
+  | postfix_expression { $$ = $1; }
+  */ 
 ;
 
 unary_expression: 
@@ -365,7 +345,8 @@ assignment_operator:
 declaration:
   function_prototype T_Semicolon { $$ = $1;	}
 	| function_definition { $$ = $1; }
-  | single_declaration T_Semicolon { $$ = new VarDecl(*$1); }
+ /* | single_declaration T_Semicolon { printf("sajkfaslkf"); $$ = $1; } */ 
+ |single_declaration { $$ = $1; }
 ;
 
 function_prototype:
@@ -378,7 +359,7 @@ function_declarator:
 ;
 
 function_header_with_parameters:
-  function_header parameter_declaration
+  function_header parameter_declaration {}
   | function_header_with_parameters T_Comma parameter_declaration
 ;
 
@@ -401,30 +382,29 @@ parameter_declaration:
 ;
 
 single_declaration:
-  type_specifier T_Identifier {
+  type_specifier T_Identifier T_Semicolon {
     Identifier *id = new Identifier(@2,$2);
     $$ = new VarDecl(id,$1);
-  }
-  | type_qualifier type_specifier T_Identifier {
+  } 
+  | type_qualifier type_specifier T_Identifier T_Semicolon{
     Identifier *id = new Identifier(@3, $3);
     $$ = new VarDecl(id, $2, $1);
   }
-  | type_specifier T_Identifier array_specifier {
+  | type_specifier T_Identifier array_specifier T_Semicolon {
 	  Identifier *id = new Identifier(@2, $2);
 		ArrayType *type = new ArrayType(@1, $1);
 		$$ = new VarDecl(id, type);
 	}
-	| type_qualifier type_specifier T_Identifier array_specifier {
+	| type_qualifier type_specifier T_Identifier array_specifier T_Semicolon {
 	  Identifier *id = new Identifier (@3, $3);
 		ArrayType *type = new ArrayType(@2, $2);
 		$$ = new VarDecl(id, type, $1);
 	}
-  | type_specifier T_Identifier T_Equal assignment_expression {
-    /* assignment expression */ 
+  | type_specifier T_Identifier T_Equal assignment_expression T_Semicolon {
 	  Identifier *id = new Identifier (@2, $2);
 		$$ = new VarDecl(id, $1, $4);
 	}
-	| type_qualifier type_specifier T_Identifier T_Equal assignment_expression {
+	| type_qualifier type_specifier T_Identifier T_Equal assignment_expression T_Semicolon {
 	  Identifier *id = new Identifier (@3, $3);
 		$$ = new VarDecl(id, $2, $1, $5);
 	}
@@ -438,7 +418,9 @@ type_qualifier:
 ;
 
 type_specifier:
-  type_specifier_nonarray { $$ = new Type(*$1); }
+  type_specifier_nonarray { 
+    $$ = new Type(*$1); 
+  }
   | type_specifier_nonarray array_specifier {
 	  $$ = new ArrayType(@1, $1);
 	}
@@ -476,17 +458,7 @@ declaration_statement:
 ;
 
 statement:
-  compound_statement_with_scope { $$ = $1; }
-  | simple_statement { $$ = $1; }
-;
-
-statement_no_new_scope:
-  compound_statement_no_new_scope { $$ = $1; }
-  | simple_statement { $$ = $1; }
-;
-
-statement_with_scope:
-  compound_statement_no_new_scope { $$ = $1; }
+  compound_statement { $$ = $1; }
   | simple_statement { $$ = $1; }
 ;
 
@@ -500,7 +472,7 @@ simple_statement:
   | jump_statement { $$ = $1; }
 ;
 
-compound_statement_with_scope:
+compound_statement:
   T_LeftBrace T_RightBrace {
 	  $$ = new StmtBlock(new List<VarDecl*>, new List<Stmt*>);
 	}
@@ -515,48 +487,35 @@ compound_statement_with_scope:
 	}
 ;
 
-compound_statement_no_new_scope:
-  T_LeftBrace T_RightBrace { 
-    $$ = new StmtBlock(new List<VarDecl*>, new List<Stmt*>); 
-  }
-  | T_LeftBrace statement_list T_RightBrace {
-	  $$ = new StmtBlock(new List<VarDecl*>, $2);
-	}
-	| T_LeftBrace var_decl_list T_RightBrace {
-	  /* printf("comp_stmt_no_scope"); */ 
-	  $$ = new StmtBlock($2, new List<Stmt*>);
-	}
-	| T_LeftBrace var_decl_list statement_list T_RightBrace {
-	  /* EmptyE("comp_stmt_no_scope1"); */ 
-	  $$ = new StmtBlock($2, $3);
-	}
-;
-
 var_decl_list:
-  single_declaration { 
-    ($$ = new List<VarDecl*>)->Append($1);
+  var_decl_list single_declaration { 
+    ($$ = $1)->Append($2); 
   }
-	| var_decl_list single_declaration { ($$ = $1)->Append($2); }
-
   /*
-  declaration { ($$ = new List<Decl*>)->Append($1);
-    */
+  | single_declaration { 
+    printf ("var_decl_list: single_declaration\n");
+    ($$ = new List<VarDecl*>)->Append($1); 
+  }
+  */ 
+  | { 
+    $$ = new List<VarDecl*>; }
+; 
 
 statement_list:
-  statement { ($$ = new List<Stmt*>)->Append($1); }
+    statement { ($$ = new List<Stmt*>)->Append($1); }
   | statement_list statement { ($$=$1)->Append($2); }
 ;
 
 expression_statement:
   T_Semicolon { $$ = new EmptyExpr(); }
-  | assignment_expression T_Semicolon
+  | assignment_expression T_Semicolon { $$ = $1; }
 ;
 
 selection_statement:
-  T_If T_LeftParen assignment_expression T_RightParen statement_with_scope {
+  T_If T_LeftParen assignment_expression T_RightParen statement {
 	  $$ = new IfStmt($3, $5, new EmptyExpr());
 	}
-	| T_If T_LeftParen assignment_expression T_RightParen statement_with_scope T_Else statement_with_scope {
+	| T_If T_LeftParen assignment_expression T_RightParen statement T_Else statement {
 	  $$ = new IfStmt($3, $5, $7);
 	}
 ;
@@ -568,7 +527,8 @@ condition:
 ;
 
 switch_statement:
-  T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace statement_list T_RightBrace
+  T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace statement_list T_RightBrace {
+  }
 ;
 
 case_label:
@@ -577,14 +537,13 @@ case_label:
 ;
 
 iteration_statement:
-  T_While T_LeftParen condition T_RightParen statement_no_new_scope {
+  T_While T_LeftParen condition T_RightParen statement {
 	  $$ = new WhileStmt($3, $5);
 	}
-  | T_Do statement_with_scope T_While T_LeftParen assignment_expression T_RightParen T_Semicolon {
+  | T_Do statement T_While T_LeftParen assignment_expression T_RightParen T_Semicolon {
 	  $$ = new DoWhileStmt($2, $5);
 	}
-  | T_For T_LeftParen for_init_statement for_rest_statement T_RightParen
- statement_no_new_scope
+  | T_For T_LeftParen for_init_statement for_rest_statement T_RightParen statement
 ;
 
 for_init_statement:
@@ -619,7 +578,7 @@ external_declaration:
 ;
 
 function_definition:
-  function_prototype compound_statement_no_new_scope {
+  function_prototype compound_statement {
 	  ($$=$1)->SetFunctionBody($2);
 	}
 ;
