@@ -121,7 +121,7 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <fnDecl>		function_declarator
 %type <fnDecl>		function_header
 %type <fnDecl>		function_header_with_parameters
-%type <decl>			parameter_declaration
+%type <vDeclList>	parameter_list
 %type <varDecl>		single_declaration
 %type <typeQual>	type_qualifier
 %type <type>			type_specifier
@@ -355,12 +355,18 @@ function_prototype:
 
 function_declarator:
   function_header { $$ = $1; }
-  | function_header_with_parameters
+  | function_header_with_parameters { $$ = $1; }
 ;
 
 function_header_with_parameters:
-  function_header parameter_declaration {}
-  | function_header_with_parameters T_Comma parameter_declaration
+  type_specifier T_Identifier T_LeftParen parameter_list {
+	  Identifier *id = new Identifier(@2, $2);
+		$$ = new FnDecl(id, $1, $4);
+	}
+	| type_qualifier type_specifier T_Identifier T_LeftParen parameter_list	{
+    Identifier *id = new Identifier(@3, $3);
+		$$ = new FnDecl(id, $2, $1, $5);
+	}
 ;
 
 function_header:
@@ -374,10 +380,18 @@ function_header:
 	}
 ;
 
-parameter_declaration:
+parameter_list:
   type_specifier T_Identifier {
 	  Identifier *id = new Identifier(@2, $2);
-		$$ = new VarDecl(id, $1);
+		VarDecl *var = new VarDecl(id, $1);
+		List<VarDecl*> *list = new List<VarDecl*>();
+		list->Append(var);
+    $$ = list;
+	}
+	| parameter_list T_Comma type_specifier T_Identifier {
+	  Identifier *id = new Identifier(@4, $4);
+		VarDecl *var = new VarDecl(id, $3);
+    ($$=$1)->Append(var);
 	}
 ;
 
