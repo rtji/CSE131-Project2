@@ -127,21 +127,21 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <type>			type_specifier
 %type <exp>				array_specifier
 %type <type>			type_specifier_nonarray
-%type <stmt>			declaration_statement
+%type <exp>				declaration_statement
 %type <stmt>			statement
 %type <stmt>			simple_statement
 %type <stmt>			compound_statement
 %type <vDeclList>	var_decl_list
 %type <stmtList>	statement_list
-%type <stmt>			expression_statement
+%type <exp>				expression_statement
 %type <stmt>			selection_statement
 %type <exp>				condition
 %type <stmt>			switch_statement
 %type <exp>				case_label
 %type <stmt>			iteration_statement
-%type <stmt>			for_init_statement
+%type <exp> 			for_init_statement
 %type <exp>				conditionopt
-%type <stmt>			for_rest_statement
+%type <exp> 			for_cond_statement
 %type <stmt>			jump_statement
 %type <decl>			translation_unit
 %type <decl>			external_declaration
@@ -511,8 +511,7 @@ var_decl_list:
     ($$ = new List<VarDecl*>)->Append($1); 
   }
   */ 
-  | { 
-    $$ = new List<VarDecl*>; }
+  | { $$ = new List<VarDecl*>; }
 ; 
 
 statement_list:
@@ -536,8 +535,10 @@ selection_statement:
 
 condition:
   assignment_expression { $$ = $1; }
+	/*
   | type_specifier T_Identifier T_Equal assignment_expression {}
   | type_qualifier type_specifier T_Identifier T_Equal assignment_expression
+	*/
 ;
 
 switch_statement:
@@ -557,7 +558,9 @@ iteration_statement:
   | T_Do statement T_While T_LeftParen assignment_expression T_RightParen T_Semicolon {
 	  $$ = new DoWhileStmt($2, $5);
 	}
-  | T_For T_LeftParen for_init_statement for_rest_statement T_RightParen statement
+  | T_For T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen statement {
+	  $$ = new ForStmt($3, $4, $5, $7);
+	}
 ;
 
 for_init_statement:
@@ -567,12 +570,10 @@ for_init_statement:
 
 conditionopt:
   condition { $$ = $1; }
-/* empty */
 ;
 
-for_rest_statement:
-  conditionopt T_Semicolon
-  | conditionopt T_Semicolon assignment_expression
+for_cond_statement:
+  conditionopt T_Semicolon { $$ = $1; }
 ;
 
 jump_statement:
