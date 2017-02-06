@@ -143,7 +143,7 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <exp>				conditionopt
 %type <exp> 			for_cond_statement
 %type <stmt>			jump_statement
-%type <decl>			translation_unit
+%type <declList>	translation_unit
 %type <decl>			external_declaration
 %type <fnDecl>		function_definition
 
@@ -583,8 +583,8 @@ jump_statement:
 ;
 
 translation_unit:
-  external_declaration { $$ = $1; }
-  | translation_unit external_declaration
+  external_declaration { ($$ = new List<Decl*>)->Append($1); }
+  | translation_unit external_declaration { ($$=$1)->Append($2); }
 ;
 
 external_declaration:
