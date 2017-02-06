@@ -50,6 +50,7 @@ void yyerror(const char *msg); // standard error-handling routine
     List<Decl*> *declList;
 		List<VarDecl*> *vDeclList;
 		List<Stmt*> *stmtList;
+		List<Expr*> *expList;
 
     Identifier *id;
     Expr *exp;
@@ -106,6 +107,7 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <call>      function_call_header_with_parameters
 %type <call>      function_call_header
 %type <id>				function_identifier
+%type <expList>		expression_list
 %type <exp>				unary_expression
 %type <op>				unary_operator
 %type <exp>				multiplicative_expression
@@ -203,29 +205,34 @@ postfix_expression:
 ;       
 
 function_call_generic: 
-  function_call_header_with_parameters T_RightParen {}
-  | function_call_header_no_parameters T_RightParen {}
+  function_call_header_with_parameters T_RightParen { $$ = $1; }
+  | function_call_header_no_parameters T_RightParen { $$ = $1; }
 ;
 
 function_call_header_no_parameters: 
-  function_call_header T_Void
+  function_call_header T_Void { $$ = $1; }
   | function_call_header { $$ = $1; }
 ;
 
 function_call_header_with_parameters: 
-  function_call_header assignment_expression {}
-  | function_call_header_with_parameters T_Comma assignment_expression {}
+	function_identifier T_LeftParen expression_list {
+	  $$ = new Call(@1, NULL, $1, $3);
+	}
 ;
 
 function_call_header: 
-  function_identifier T_LeftParen {}
+  function_identifier T_LeftParen { 
+	  $$ = new Call(@1, NULL, $1, new List<Expr*>);
+	}
 ;
 
 function_identifier: 
-  /*
-  type_specifier {}
-  | postfix_expression { $$ = $1; }
-  */ 
+  T_Identifier { $$ = new Identifier(@1, $1); }
+;
+
+expression_list:
+  assignment_expression { ($$ = new List<Expr*>)->Append($1); }
+	| expression_list T_Comma assignment_expression { ($$=$1)->Append($3); }
 ;
 
 unary_expression: 
@@ -345,7 +352,6 @@ assignment_operator:
 declaration:
   function_prototype T_Semicolon { $$ = $1;	}
 	| function_definition { $$ = $1; }
- /* | single_declaration T_Semicolon { printf("sajkfaslkf"); $$ = $1; } */ 
  |single_declaration { $$ = $1; }
 ;
 
@@ -505,12 +511,6 @@ var_decl_list:
   var_decl_list single_declaration { 
     ($$ = $1)->Append($2); 
   }
-  /*
-  | single_declaration { 
-    printf ("var_decl_list: single_declaration\n");
-    ($$ = new List<VarDecl*>)->Append($1); 
-  }
-  */ 
   | { $$ = new List<VarDecl*>; }
 ; 
 
@@ -535,10 +535,6 @@ selection_statement:
 
 condition:
   assignment_expression { $$ = $1; }
-	/*
-  | type_specifier T_Identifier T_Equal assignment_expression {}
-  | type_qualifier type_specifier T_Identifier T_Equal assignment_expression
-	*/
 ;
 
 switch_statement:
