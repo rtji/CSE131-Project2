@@ -539,6 +539,7 @@ condition:
 
 switch_statement:
   T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace statement_list T_RightBrace {
+    $$ = new SwitchStmt ($3, $6, new Default());
   }
 ;
 
@@ -546,6 +547,11 @@ case_label:
   T_Case assignment_expression T_Colon
   | T_Default T_Colon
 ;
+
+/*
+default_label:
+  T_Default assignment_expression T
+*/ 
 
 iteration_statement:
   T_While T_LeftParen condition T_RightParen statement {
