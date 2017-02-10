@@ -50,6 +50,7 @@ void yyerror(const char *msg); // standard error-handling routine
     List<Decl*> *declList;
 		List<VarDecl*> *vDeclList;
 		List<Stmt*> *stmtList;
+		List<Expr*> *expList;
 
     Identifier *id;
     Expr *exp;
@@ -106,6 +107,7 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <call>      function_call_header_with_parameters
 %type <call>      function_call_header
 %type <id>				function_identifier
+%type <expList>		expression_list
 %type <exp>				unary_expression
 %type <op>				unary_operator
 %type <exp>				multiplicative_expression
@@ -127,23 +129,23 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <type>			type_specifier
 %type <exp>				array_specifier
 %type <type>			type_specifier_nonarray
-%type <stmt>			declaration_statement
+%type <exp>				declaration_statement
 %type <stmt>			statement
 %type <stmt>			simple_statement
 %type <stmt>			compound_statement
 %type <vDeclList>	var_decl_list
 %type <stmtList>	statement_list
-%type <stmt>			expression_statement
+%type <exp>				expression_statement
 %type <stmt>			selection_statement
 %type <exp>				condition
 %type <stmt>			switch_statement
 %type <exp>				case_label
 %type <stmt>			iteration_statement
-%type <stmt>			for_init_statement
+%type <exp> 			for_init_statement
 %type <exp>				conditionopt
-%type <stmt>			for_rest_statement
+%type <exp> 			for_cond_statement
 %type <stmt>			jump_statement
-%type <decl>			translation_unit
+%type <declList>	translation_unit
 %type <decl>			external_declaration
 %type <fnDecl>		function_definition
 
@@ -203,29 +205,34 @@ postfix_expression:
 ;       
 
 function_call_generic: 
-  function_call_header_with_parameters T_RightParen {}
-  | function_call_header_no_parameters T_RightParen {}
+  function_call_header_with_parameters T_RightParen { $$ = $1; }
+  | function_call_header_no_parameters T_RightParen { $$ = $1; }
 ;
 
 function_call_header_no_parameters: 
-  function_call_header T_Void
+  function_call_header T_Void { $$ = $1; }
   | function_call_header { $$ = $1; }
 ;
 
 function_call_header_with_parameters: 
-  function_call_header assignment_expression {}
-  | function_call_header_with_parameters T_Comma assignment_expression {}
+	function_identifier T_LeftParen expression_list {
+	  $$ = new Call(@1, NULL, $1, $3);
+	}
 ;
 
 function_call_header: 
-  function_identifier T_LeftParen {}
+  function_identifier T_LeftParen { 
+	  $$ = new Call(@1, NULL, $1, new List<Expr*>);
+	}
 ;
 
 function_identifier: 
-  /*
-  type_specifier {}
-  | postfix_expression { $$ = $1; }
-  */ 
+  T_Identifier { $$ = new Identifier(@1, $1); }
+;
+
+expression_list:
+  assignment_expression { ($$ = new List<Expr*>)->Append($1); }
+	| expression_list T_Comma assignment_expression { ($$=$1)->Append($3); }
 ;
 
 unary_expression: 
@@ -345,7 +352,6 @@ assignment_operator:
 declaration:
   function_prototype T_Semicolon { $$ = $1;	}
 	| function_definition { $$ = $1; }
- /* | single_declaration T_Semicolon { printf("sajkfaslkf"); $$ = $1; } */ 
  |single_declaration { $$ = $1; }
 ;
 
@@ -505,14 +511,7 @@ var_decl_list:
   var_decl_list single_declaration { 
     ($$ = $1)->Append($2); 
   }
-  /*
-  | single_declaration { 
-    printf ("var_decl_list: single_declaration\n");
-    ($$ = new List<VarDecl*>)->Append($1); 
-  }
-  */ 
-  | { 
-    $$ = new List<VarDecl*>; }
+  | { $$ = new List<VarDecl*>; }
 ; 
 
 statement_list:
@@ -536,8 +535,6 @@ selection_statement:
 
 condition:
   assignment_expression { $$ = $1; }
-  | type_specifier T_Identifier T_Equal assignment_expression {}
-  | type_qualifier type_specifier T_Identifier T_Equal assignment_expression
 ;
 
 switch_statement:
@@ -557,7 +554,9 @@ iteration_statement:
   | T_Do statement T_While T_LeftParen assignment_expression T_RightParen T_Semicolon {
 	  $$ = new DoWhileStmt($2, $5);
 	}
-  | T_For T_LeftParen for_init_statement for_rest_statement T_RightParen statement
+  | T_For T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen statement {
+	  $$ = new ForStmt($3, $4, $5, $7);
+	}
 ;
 
 for_init_statement:
@@ -567,12 +566,10 @@ for_init_statement:
 
 conditionopt:
   condition { $$ = $1; }
-/* empty */
 ;
 
-for_rest_statement:
-  conditionopt T_Semicolon
-  | conditionopt T_Semicolon assignment_expression
+for_cond_statement:
+  conditionopt T_Semicolon { $$ = $1; }
 ;
 
 jump_statement:
@@ -582,8 +579,8 @@ jump_statement:
 ;
 
 translation_unit:
-  external_declaration { $$ = $1; }
-  | translation_unit external_declaration
+  external_declaration { ($$ = new List<Decl*>)->Append($1); }
+  | translation_unit external_declaration { ($$=$1)->Append($2); }
 ;
 
 external_declaration:
