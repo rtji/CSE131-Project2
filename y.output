@@ -14,11 +14,11 @@ Terminals unused in grammar
 
 Rules useless in grammar
 
-  139 translation_unit: external_declaration
-  140                 | translation_unit external_declaration
+  142 translation_unit: external_declaration
+  143                 | translation_unit external_declaration
 
-  141 external_declaration: function_definition
-  142                     | declaration
+  144 external_declaration: function_definition
+  145                     | declaration
 
 
 Rules useless in parser due to conflicts
@@ -26,16 +26,17 @@ Rules useless in parser due to conflicts
    21 function_identifier: T_Identifier
 
 
-State 40 conflicts: 21 shift/reduce
-State 63 conflicts: 1 reduce/reduce
-State 68 conflicts: 2 shift/reduce
-State 77 conflicts: 2 shift/reduce
-State 83 conflicts: 1 shift/reduce
+State 40 conflicts: 20 shift/reduce
+State 62 conflicts: 1 reduce/reduce
+State 67 conflicts: 2 shift/reduce
+State 76 conflicts: 2 shift/reduce
+State 82 conflicts: 1 shift/reduce
+State 179 conflicts: 2 shift/reduce
+State 180 conflicts: 2 shift/reduce
 State 181 conflicts: 2 shift/reduce
 State 182 conflicts: 2 shift/reduce
-State 183 conflicts: 2 shift/reduce
-State 184 conflicts: 2 shift/reduce
-State 215 conflicts: 1 shift/reduce
+State 204 conflicts: 19 shift/reduce
+State 214 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -207,27 +208,32 @@ Grammar
 
   124 condition: assignment_expression
 
-  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace statement_list T_RightBrace
+  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list default T_RightBrace
+  126                 | T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list T_RightBrace
 
-  126 case_label: T_Case assignment_expression T_Colon
-  127           | T_Default T_Colon
+  127 case_list: case_list case_label
+  128          | case_label
 
-  128 iteration_statement: T_While T_LeftParen condition T_RightParen statement
-  129                    | T_Do statement T_While T_LeftParen assignment_expression T_RightParen T_Semicolon
-  130                    | T_For T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen statement
+  129 case_label: T_Case assignment_expression T_Colon statement_list
 
-  131 for_init_statement: expression_statement
-  132                   | declaration_statement
+  130 default: T_Default T_Colon statement_list
 
-  133 conditionopt: condition
+  131 iteration_statement: T_While T_LeftParen condition T_RightParen statement
+  132                    | T_Do statement T_While T_LeftParen assignment_expression T_RightParen T_Semicolon
+  133                    | T_For T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen statement
 
-  134 for_cond_statement: conditionopt T_Semicolon
+  134 for_init_statement: expression_statement
+  135                   | declaration_statement
 
-  135 jump_statement: T_Break T_Semicolon
-  136               | T_Return T_Semicolon
-  137               | T_Return assignment_expression T_Semicolon
+  136 conditionopt: condition
 
-  138 function_definition: function_prototype compound_statement
+  137 for_cond_statement: conditionopt T_Semicolon
+
+  138 jump_statement: T_Break T_Semicolon
+  139               | T_Return T_Semicolon
+  140               | T_Return assignment_expression T_Semicolon
+
+  141 function_definition: function_prototype compound_statement
 
 
 Terminals, with rules where they appear
@@ -251,22 +257,22 @@ T_MulAssign (271) 53
 T_DivAssign (272) 54
 T_AddAssign (273) 55
 T_SubAssign (274) 56
-T_While (275) 128 129
-T_For (276) 130
+T_While (275) 131 132
+T_For (276) 133
 T_If (277) 122 123
 T_Else (278) 123
-T_Return (279) 136 137
-T_Break (280) 135
+T_Return (279) 139 140
+T_Break (280) 138
 T_Const (281) 75
 T_Uniform (282) 78
 T_Layout (283)
 T_Continue (284)
-T_Do (285) 129
+T_Do (285) 132
 T_Inc (286) 13 25
 T_Dec (287) 14 26
-T_Switch (288) 125
-T_Case (289) 126
-T_Default (290) 127
+T_Switch (288) 125 126
+T_Case (289) 129
+T_Default (290) 130
 T_In (291) 76
 T_Out (292) 77
 T_InOut (293)
@@ -287,21 +293,21 @@ T_Uvec2 (307) 96
 T_Uvec3 (308) 97
 T_Uvec4 (309) 98
 T_Struct (310)
-T_Semicolon (311) 57 69 70 71 72 73 74 120 121 129 134 135 136 137
+T_Semicolon (311) 57 69 70 71 72 73 74 120 121 132 137 138 139 140
 T_Dot (312) 12
-T_Colon (313) 49 126 127
+T_Colon (313) 49 129 130
 T_Question (314) 49
 T_Comma (315) 23 68
 T_Dash (316) 29 35
 T_Plus (317) 28 34
 T_Star (318) 31
 T_Slash (319) 32
-T_LeftParen (320) 8 19 20 63 64 65 66 122 123 125 128 129 130
-T_RightParen (321) 8 15 16 60 122 123 125 128 129 130
+T_LeftParen (320) 8 19 20 63 64 65 66 122 123 125 126 131 132 133
+T_RightParen (321) 8 15 16 60 122 123 125 126 131 132 133
 T_LeftBracket (322) 10 81
 T_RightBracket (323) 10 81
-T_LeftBrace (324) 112 113 114 115 125
-T_RightBrace (325) 112 113 114 115 125
+T_LeftBrace (324) 112 113 114 115 125 126
+T_RightBrace (325) 112 113 114 115 125 126
 T_Identifier (326) 4 12 21 63 64 65 66 67 68 69 70 71 72 73 74
 T_IntConstant (327) 5
 T_FloatConstant (328) 6
@@ -352,13 +358,13 @@ conditional_expression (94)
     on left: 48 49, on right: 50 81
 assignment_expression (95)
     on left: 50 51, on right: 8 10 22 23 49 51 73 74 102 121 122 123
-    124 125 126 129 130 137
+    124 125 126 129 132 133 140
 assignment_operator (96)
     on left: 52 53 54 55 56, on right: 51
 declaration (97)
     on left: 57 58 59, on right: 2 3
 function_prototype (98)
-    on left: 60, on right: 57 138
+    on left: 60, on right: 57 141
 function_declarator (99)
     on left: 61 62, on right: 60
 function_header_with_parameters (100)
@@ -379,39 +385,43 @@ type_specifier_nonarray (107)
     on left: 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99
     100 101, on right: 79 80
 declaration_statement (108)
-    on left: 102, on right: 105 132
+    on left: 102, on right: 105 135
 statement (109)
-    on left: 103 104, on right: 118 119 122 123 128 129 130
+    on left: 103 104, on right: 118 119 122 123 131 132 133
 simple_statement (110)
     on left: 105 106 107 108 109 110 111, on right: 104
 compound_statement (111)
-    on left: 112 113 114 115, on right: 103 138
+    on left: 112 113 114 115, on right: 103 141
 var_decl_list (112)
     on left: 116 117, on right: 114 115 116
 statement_list (113)
-    on left: 118 119, on right: 113 115 119 125
+    on left: 118 119, on right: 113 115 119 129 130
 expression_statement (114)
-    on left: 120 121, on right: 106 131
+    on left: 120 121, on right: 106 134
 selection_statement (115)
     on left: 122 123, on right: 107
 condition (116)
-    on left: 124, on right: 128 133
+    on left: 124, on right: 131 136
 switch_statement (117)
-    on left: 125, on right: 108
-case_label (118)
-    on left: 126 127, on right: 109
-iteration_statement (119)
-    on left: 128 129 130, on right: 110
-for_init_statement (120)
-    on left: 131 132, on right: 130
-conditionopt (121)
-    on left: 133, on right: 134
-for_cond_statement (122)
-    on left: 134, on right: 130
-jump_statement (123)
-    on left: 135 136 137, on right: 111
-function_definition (124)
-    on left: 138, on right: 58
+    on left: 125 126, on right: 108
+case_list (118)
+    on left: 127 128, on right: 125 126 127
+case_label (119)
+    on left: 129, on right: 109 127 128
+default (120)
+    on left: 130, on right: 125
+iteration_statement (121)
+    on left: 131 132 133, on right: 110
+for_init_statement (122)
+    on left: 134 135, on right: 133
+conditionopt (123)
+    on left: 136, on right: 137
+for_cond_statement (124)
+    on left: 137, on right: 133
+jump_statement (125)
+    on left: 138 139 140, on right: 111
+function_definition (126)
+    on left: 141, on right: 58
 
 
 state 0
@@ -686,7 +696,7 @@ state 27
 state 28
 
    57 declaration: function_prototype . T_Semicolon
-  138 function_definition: function_prototype . compound_statement
+  141 function_definition: function_prototype . compound_statement
 
     T_Semicolon  shift, and go to state 39
     T_LeftBrace  shift, and go to state 40
@@ -823,17 +833,16 @@ state 40
     T_Dec            shift, and go to state 54
     T_Switch         shift, and go to state 55
     T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
     T_LeftBrace      shift, and go to state 40
-    T_RightBrace     shift, and go to state 62
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_RightBrace     shift, and go to state 61
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
     T_While          [reduce using rule 117 (var_decl_list)]
     T_For            [reduce using rule 117 (var_decl_list)]
@@ -845,7 +854,6 @@ state 40
     T_Dec            [reduce using rule 117 (var_decl_list)]
     T_Switch         [reduce using rule 117 (var_decl_list)]
     T_Case           [reduce using rule 117 (var_decl_list)]
-    T_Default        [reduce using rule 117 (var_decl_list)]
     T_Semicolon      [reduce using rule 117 (var_decl_list)]
     T_Dash           [reduce using rule 117 (var_decl_list)]
     T_Plus           [reduce using rule 117 (var_decl_list)]
@@ -858,42 +866,42 @@ state 40
     T_BoolConstant   [reduce using rule 117 (var_decl_list)]
     $default         reduce using rule 117 (var_decl_list)
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
-    statement                             go to state 85
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    var_decl_list                         go to state 88
-    statement_list                        go to state 89
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 84
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    var_decl_list                         go to state 87
+    statement_list                        go to state 88
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
 
 
 state 41
 
-  138 function_definition: function_prototype compound_statement .
+  141 function_definition: function_prototype compound_statement .
 
-    $default  reduce using rule 138 (function_definition)
+    $default  reduce using rule 141 (function_definition)
 
 
 state 42
@@ -911,7 +919,7 @@ state 43
    72                   | type_qualifier type_specifier . T_Identifier array_specifier T_Semicolon
    74                   | type_qualifier type_specifier . T_Identifier T_Equal assignment_expression T_Semicolon
 
-    T_Identifier  shift, and go to state 96
+    T_Identifier  shift, and go to state 95
 
 
 state 44
@@ -922,12 +930,12 @@ state 44
    71                   | type_specifier T_Identifier . array_specifier T_Semicolon
    73                   | type_specifier T_Identifier . T_Equal assignment_expression T_Semicolon
 
-    T_Equal        shift, and go to state 97
-    T_Semicolon    shift, and go to state 98
-    T_LeftParen    shift, and go to state 99
+    T_Equal        shift, and go to state 96
+    T_Semicolon    shift, and go to state 97
+    T_LeftParen    shift, and go to state 98
     T_LeftBracket  shift, and go to state 45
 
-    array_specifier  go to state 100
+    array_specifier  go to state 99
 
 
 state 45
@@ -936,30 +944,30 @@ state 45
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 102
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 101
 
 
 state 46
@@ -971,16 +979,16 @@ state 46
 
 state 47
 
-  128 iteration_statement: T_While . T_LeftParen condition T_RightParen statement
+  131 iteration_statement: T_While . T_LeftParen condition T_RightParen statement
 
-    T_LeftParen  shift, and go to state 103
+    T_LeftParen  shift, and go to state 102
 
 
 state 48
 
-  130 iteration_statement: T_For . T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen statement
+  133 iteration_statement: T_For . T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen statement
 
-    T_LeftParen  shift, and go to state 104
+    T_LeftParen  shift, and go to state 103
 
 
 state 49
@@ -988,54 +996,54 @@ state 49
   122 selection_statement: T_If . T_LeftParen assignment_expression T_RightParen statement
   123                    | T_If . T_LeftParen assignment_expression T_RightParen statement T_Else statement
 
-    T_LeftParen  shift, and go to state 105
+    T_LeftParen  shift, and go to state 104
 
 
 state 50
 
-  136 jump_statement: T_Return . T_Semicolon
-  137               | T_Return . assignment_expression T_Semicolon
+  139 jump_statement: T_Return . T_Semicolon
+  140               | T_Return . assignment_expression T_Semicolon
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Semicolon      shift, and go to state 106
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Semicolon      shift, and go to state 105
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 107
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 106
 
 
 state 51
 
-  135 jump_statement: T_Break . T_Semicolon
+  138 jump_statement: T_Break . T_Semicolon
 
-    T_Semicolon  shift, and go to state 108
+    T_Semicolon  shift, and go to state 107
 
 
 state 52
 
-  129 iteration_statement: T_Do . statement T_While T_LeftParen assignment_expression T_RightParen T_Semicolon
+  132 iteration_statement: T_Do . statement T_While T_LeftParen assignment_expression T_RightParen T_Semicolon
 
     T_While          shift, and go to state 47
     T_For            shift, and go to state 48
@@ -1047,44 +1055,43 @@ state 52
     T_Dec            shift, and go to state 54
     T_Switch         shift, and go to state 55
     T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
     T_LeftBrace      shift, and go to state 40
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
-    statement                             go to state 109
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 108
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
 
 
 state 53
@@ -1093,23 +1100,23 @@ state 53
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 110
-    unary_operator                        go to state 75
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 109
+    unary_operator                        go to state 74
 
 
 state 54
@@ -1118,134 +1125,128 @@ state 54
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 111
-    unary_operator                        go to state 75
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 110
+    unary_operator                        go to state 74
 
 
 state 55
 
-  125 switch_statement: T_Switch . T_LeftParen assignment_expression T_RightParen T_LeftBrace statement_list T_RightBrace
+  125 switch_statement: T_Switch . T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list default T_RightBrace
+  126                 | T_Switch . T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list T_RightBrace
 
-    T_LeftParen  shift, and go to state 112
+    T_LeftParen  shift, and go to state 111
 
 
 state 56
 
-  126 case_label: T_Case . assignment_expression T_Colon
+  129 case_label: T_Case . assignment_expression T_Colon statement_list
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 113
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 112
 
 
 state 57
-
-  127 case_label: T_Default . T_Colon
-
-    T_Colon  shift, and go to state 114
-
-
-state 58
 
   120 expression_statement: T_Semicolon .
 
     $default  reduce using rule 120 (expression_statement)
 
 
-state 59
+state 58
 
    29 unary_operator: T_Dash .
 
     $default  reduce using rule 29 (unary_operator)
 
 
-state 60
+state 59
 
    28 unary_operator: T_Plus .
 
     $default  reduce using rule 28 (unary_operator)
 
 
-state 61
+state 60
 
     8 primary_expression: T_LeftParen . assignment_expression T_RightParen
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 115
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 113
 
 
-state 62
+state 61
 
   112 compound_statement: T_LeftBrace T_RightBrace .
 
     $default  reduce using rule 112 (compound_statement)
 
 
-state 63
+state 62
 
     4 primary_expression: T_Identifier .
    21 function_identifier: T_Identifier .
@@ -1255,35 +1256,35 @@ state 63
     $default     reduce using rule 4 (primary_expression)
 
 
-state 64
+state 63
 
     5 primary_expression: T_IntConstant .
 
     $default  reduce using rule 5 (primary_expression)
 
 
-state 65
+state 64
 
     6 primary_expression: T_FloatConstant .
 
     $default  reduce using rule 6 (primary_expression)
 
 
-state 66
+state 65
 
     7 primary_expression: T_BoolConstant .
 
     $default  reduce using rule 7 (primary_expression)
 
 
-state 67
+state 66
 
     9 postfix_expression: primary_expression .
 
     $default  reduce using rule 9 (postfix_expression)
 
 
-state 68
+state 67
 
    10 postfix_expression: postfix_expression . T_LeftBracket assignment_expression T_RightBracket
    12                   | postfix_expression . T_Dot T_Identifier
@@ -1291,123 +1292,123 @@ state 68
    14                   | postfix_expression . T_Dec
    24 unary_expression: postfix_expression .
 
-    T_Inc          shift, and go to state 116
-    T_Dec          shift, and go to state 117
-    T_Dot          shift, and go to state 118
-    T_LeftBracket  shift, and go to state 119
+    T_Inc          shift, and go to state 114
+    T_Dec          shift, and go to state 115
+    T_Dot          shift, and go to state 116
+    T_LeftBracket  shift, and go to state 117
 
     T_Inc     [reduce using rule 24 (unary_expression)]
     T_Dec     [reduce using rule 24 (unary_expression)]
     $default  reduce using rule 24 (unary_expression)
 
 
-state 69
+state 68
 
    11 postfix_expression: function_call_generic .
 
     $default  reduce using rule 11 (postfix_expression)
 
 
-state 70
+state 69
 
    16 function_call_generic: function_call_header_no_parameters . T_RightParen
 
-    T_RightParen  shift, and go to state 120
+    T_RightParen  shift, and go to state 118
+
+
+state 70
+
+   15 function_call_generic: function_call_header_with_parameters . T_RightParen
+
+    T_RightParen  shift, and go to state 119
 
 
 state 71
 
-   15 function_call_generic: function_call_header_with_parameters . T_RightParen
-
-    T_RightParen  shift, and go to state 121
-
-
-state 72
-
    17 function_call_header_no_parameters: function_call_header . T_Void
    18                                   | function_call_header .
 
-    T_Void  shift, and go to state 122
+    T_Void  shift, and go to state 120
 
     $default  reduce using rule 18 (function_call_header_no_parameters)
 
 
-state 73
+state 72
 
    19 function_call_header_with_parameters: function_identifier . T_LeftParen expression_list
    20 function_call_header: function_identifier . T_LeftParen
 
-    T_LeftParen  shift, and go to state 123
+    T_LeftParen  shift, and go to state 121
 
 
-state 74
+state 73
 
    30 multiplicative_expression: unary_expression .
    51 assignment_expression: unary_expression . assignment_operator assignment_expression
 
-    T_Equal      shift, and go to state 124
-    T_MulAssign  shift, and go to state 125
-    T_DivAssign  shift, and go to state 126
-    T_AddAssign  shift, and go to state 127
-    T_SubAssign  shift, and go to state 128
+    T_Equal      shift, and go to state 122
+    T_MulAssign  shift, and go to state 123
+    T_DivAssign  shift, and go to state 124
+    T_AddAssign  shift, and go to state 125
+    T_SubAssign  shift, and go to state 126
 
     $default  reduce using rule 30 (multiplicative_expression)
 
-    assignment_operator  go to state 129
+    assignment_operator  go to state 127
 
 
-state 75
+state 74
 
    27 unary_expression: unary_operator . unary_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 130
-    unary_operator                        go to state 75
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 128
+    unary_operator                        go to state 74
 
 
-state 76
+state 75
 
    31 multiplicative_expression: multiplicative_expression . T_Star unary_expression
    32                          | multiplicative_expression . T_Slash unary_expression
    33 additive_expression: multiplicative_expression .
 
-    T_Star   shift, and go to state 131
-    T_Slash  shift, and go to state 132
+    T_Star   shift, and go to state 129
+    T_Slash  shift, and go to state 130
 
     $default  reduce using rule 33 (additive_expression)
 
 
-state 77
+state 76
 
    34 additive_expression: additive_expression . T_Plus multiplicative_expression
    35                    | additive_expression . T_Dash multiplicative_expression
    36 relational_expression: additive_expression .
 
-    T_Dash  shift, and go to state 133
-    T_Plus  shift, and go to state 134
+    T_Dash  shift, and go to state 131
+    T_Plus  shift, and go to state 132
 
     T_Dash    [reduce using rule 36 (relational_expression)]
     T_Plus    [reduce using rule 36 (relational_expression)]
     $default  reduce using rule 36 (relational_expression)
 
 
-state 78
+state 77
 
    37 relational_expression: relational_expression . T_LeftAngle additive_expression
    38                      | relational_expression . T_RightAngle additive_expression
@@ -1415,95 +1416,95 @@ state 78
    40                      | relational_expression . T_GreaterEqual additive_expression
    41 equality_expression: relational_expression .
 
-    T_LessEqual     shift, and go to state 135
-    T_GreaterEqual  shift, and go to state 136
-    T_LeftAngle     shift, and go to state 137
-    T_RightAngle    shift, and go to state 138
+    T_LessEqual     shift, and go to state 133
+    T_GreaterEqual  shift, and go to state 134
+    T_LeftAngle     shift, and go to state 135
+    T_RightAngle    shift, and go to state 136
 
     $default  reduce using rule 41 (equality_expression)
 
 
-state 79
+state 78
 
    42 equality_expression: equality_expression . T_EQ relational_expression
    43                    | equality_expression . T_NE relational_expression
    44 logical_and_expression: equality_expression .
 
-    T_EQ  shift, and go to state 139
-    T_NE  shift, and go to state 140
+    T_EQ  shift, and go to state 137
+    T_NE  shift, and go to state 138
 
     $default  reduce using rule 44 (logical_and_expression)
 
 
-state 80
+state 79
 
    45 logical_and_expression: logical_and_expression . T_And equality_expression
    46 logical_or_expression: logical_and_expression .
 
-    T_And  shift, and go to state 141
+    T_And  shift, and go to state 139
 
     $default  reduce using rule 46 (logical_or_expression)
 
 
-state 81
+state 80
 
    47 logical_or_expression: logical_or_expression . T_Or logical_and_expression
    48 conditional_expression: logical_or_expression .
    49                       | logical_or_expression . T_Question assignment_expression T_Colon assignment_expression
 
-    T_Or        shift, and go to state 142
-    T_Question  shift, and go to state 143
+    T_Or        shift, and go to state 140
+    T_Question  shift, and go to state 141
 
     $default  reduce using rule 48 (conditional_expression)
 
 
-state 82
+state 81
 
    50 assignment_expression: conditional_expression .
 
     $default  reduce using rule 50 (assignment_expression)
 
 
-state 83
+state 82
 
   102 declaration_statement: assignment_expression .
   121 expression_statement: assignment_expression . T_Semicolon
 
-    T_Semicolon  shift, and go to state 144
+    T_Semicolon  shift, and go to state 142
 
     T_Semicolon  [reduce using rule 102 (declaration_statement)]
     $default     reduce using rule 102 (declaration_statement)
 
 
-state 84
+state 83
 
   105 simple_statement: declaration_statement .
 
     $default  reduce using rule 105 (simple_statement)
 
 
-state 85
+state 84
 
   118 statement_list: statement .
 
     $default  reduce using rule 118 (statement_list)
 
 
-state 86
+state 85
 
   104 statement: simple_statement .
 
     $default  reduce using rule 104 (statement)
 
 
-state 87
+state 86
 
   103 statement: compound_statement .
 
     $default  reduce using rule 103 (statement)
 
 
-state 88
+state 87
 
   114 compound_statement: T_LeftBrace var_decl_list . T_RightBrace
   115                   | T_LeftBrace var_decl_list . statement_list T_RightBrace
@@ -1525,7 +1526,6 @@ state 88
     T_Dec            shift, and go to state 54
     T_Switch         shift, and go to state 55
     T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
     T_In             shift, and go to state 7
     T_Out            shift, and go to state 8
     T_Mat2           shift, and go to state 9
@@ -1544,52 +1544,52 @@ state 88
     T_Uvec2          shift, and go to state 22
     T_Uvec3          shift, and go to state 23
     T_Uvec4          shift, and go to state 24
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
     T_LeftBrace      shift, and go to state 40
-    T_RightBrace     shift, and go to state 145
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_RightBrace     shift, and go to state 143
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    single_declaration                    go to state 146
-    type_qualifier                        go to state 147
-    type_specifier                        go to state 148
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    single_declaration                    go to state 144
+    type_qualifier                        go to state 145
+    type_specifier                        go to state 146
     type_specifier_nonarray               go to state 35
-    declaration_statement                 go to state 84
-    statement                             go to state 85
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    statement_list                        go to state 149
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    declaration_statement                 go to state 83
+    statement                             go to state 84
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    statement_list                        go to state 147
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
 
 
-state 89
+state 88
 
   113 compound_statement: T_LeftBrace statement_list . T_RightBrace
   119 statement_list: statement_list . statement
@@ -1604,90 +1604,89 @@ state 89
     T_Dec            shift, and go to state 54
     T_Switch         shift, and go to state 55
     T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
     T_LeftBrace      shift, and go to state 40
-    T_RightBrace     shift, and go to state 150
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_RightBrace     shift, and go to state 148
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
-    statement                             go to state 151
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 149
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
 
 
-state 90
+state 89
 
   106 simple_statement: expression_statement .
 
     $default  reduce using rule 106 (simple_statement)
 
 
-state 91
+state 90
 
   107 simple_statement: selection_statement .
 
     $default  reduce using rule 107 (simple_statement)
 
 
-state 92
+state 91
 
   108 simple_statement: switch_statement .
 
     $default  reduce using rule 108 (simple_statement)
 
 
-state 93
+state 92
 
   109 simple_statement: case_label .
 
     $default  reduce using rule 109 (simple_statement)
 
 
-state 94
+state 93
 
   110 simple_statement: iteration_statement .
 
     $default  reduce using rule 110 (simple_statement)
 
 
-state 95
+state 94
 
   111 simple_statement: jump_statement .
 
     $default  reduce using rule 111 (simple_statement)
 
 
-state 96
+state 95
 
    64 function_header_with_parameters: type_qualifier type_specifier T_Identifier . T_LeftParen parameter_list
    66 function_header: type_qualifier type_specifier T_Identifier . T_LeftParen
@@ -1695,55 +1694,55 @@ state 96
    72                   | type_qualifier type_specifier T_Identifier . array_specifier T_Semicolon
    74                   | type_qualifier type_specifier T_Identifier . T_Equal assignment_expression T_Semicolon
 
-    T_Equal        shift, and go to state 152
-    T_Semicolon    shift, and go to state 153
-    T_LeftParen    shift, and go to state 154
+    T_Equal        shift, and go to state 150
+    T_Semicolon    shift, and go to state 151
+    T_LeftParen    shift, and go to state 152
     T_LeftBracket  shift, and go to state 45
 
-    array_specifier  go to state 155
+    array_specifier  go to state 153
 
 
-state 97
+state 96
 
    73 single_declaration: type_specifier T_Identifier T_Equal . assignment_expression T_Semicolon
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 156
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 154
 
 
-state 98
+state 97
 
    69 single_declaration: type_specifier T_Identifier T_Semicolon .
 
     $default  reduce using rule 69 (single_declaration)
 
 
-state 99
+state 98
 
    63 function_header_with_parameters: type_specifier T_Identifier T_LeftParen . parameter_list
    65 function_header: type_specifier T_Identifier T_LeftParen .
@@ -1771,800 +1770,794 @@ state 99
 
     $default  reduce using rule 65 (function_header)
 
-    parameter_list           go to state 157
-    type_specifier           go to state 158
+    parameter_list           go to state 155
+    type_specifier           go to state 156
     type_specifier_nonarray  go to state 35
 
 
-state 100
+state 99
 
    71 single_declaration: type_specifier T_Identifier array_specifier . T_Semicolon
 
-    T_Semicolon  shift, and go to state 159
+    T_Semicolon  shift, and go to state 157
 
 
-state 101
+state 100
 
    30 multiplicative_expression: unary_expression .
 
     $default  reduce using rule 30 (multiplicative_expression)
 
 
-state 102
+state 101
 
    81 array_specifier: T_LeftBracket conditional_expression . T_RightBracket
 
-    T_RightBracket  shift, and go to state 160
+    T_RightBracket  shift, and go to state 158
+
+
+state 102
+
+  131 iteration_statement: T_While T_LeftParen . condition T_RightParen statement
+
+    T_Inc            shift, and go to state 53
+    T_Dec            shift, and go to state 54
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
+
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 159
+    condition                             go to state 160
 
 
 state 103
 
-  128 iteration_statement: T_While T_LeftParen . condition T_RightParen statement
+  133 iteration_statement: T_For T_LeftParen . for_init_statement for_cond_statement assignment_expression T_RightParen statement
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 161
-    condition                             go to state 162
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 161
+    expression_statement                  go to state 162
+    for_init_statement                    go to state 163
 
 
 state 104
-
-  130 iteration_statement: T_For T_LeftParen . for_init_statement for_cond_statement assignment_expression T_RightParen statement
-
-    T_Inc            shift, and go to state 53
-    T_Dec            shift, and go to state 54
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
-
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 163
-    expression_statement                  go to state 164
-    for_init_statement                    go to state 165
-
-
-state 105
 
   122 selection_statement: T_If T_LeftParen . assignment_expression T_RightParen statement
   123                    | T_If T_LeftParen . assignment_expression T_RightParen statement T_Else statement
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 166
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 164
+
+
+state 105
+
+  139 jump_statement: T_Return T_Semicolon .
+
+    $default  reduce using rule 139 (jump_statement)
 
 
 state 106
 
-  136 jump_statement: T_Return T_Semicolon .
+  140 jump_statement: T_Return assignment_expression . T_Semicolon
 
-    $default  reduce using rule 136 (jump_statement)
+    T_Semicolon  shift, and go to state 165
 
 
 state 107
 
-  137 jump_statement: T_Return assignment_expression . T_Semicolon
+  138 jump_statement: T_Break T_Semicolon .
 
-    T_Semicolon  shift, and go to state 167
+    $default  reduce using rule 138 (jump_statement)
 
 
 state 108
 
-  135 jump_statement: T_Break T_Semicolon .
+  132 iteration_statement: T_Do statement . T_While T_LeftParen assignment_expression T_RightParen T_Semicolon
 
-    $default  reduce using rule 135 (jump_statement)
+    T_While  shift, and go to state 166
 
 
 state 109
-
-  129 iteration_statement: T_Do statement . T_While T_LeftParen assignment_expression T_RightParen T_Semicolon
-
-    T_While  shift, and go to state 168
-
-
-state 110
 
    25 unary_expression: T_Inc unary_expression .
 
     $default  reduce using rule 25 (unary_expression)
 
 
-state 111
+state 110
 
    26 unary_expression: T_Dec unary_expression .
 
     $default  reduce using rule 26 (unary_expression)
 
 
-state 112
+state 111
 
-  125 switch_statement: T_Switch T_LeftParen . assignment_expression T_RightParen T_LeftBrace statement_list T_RightBrace
+  125 switch_statement: T_Switch T_LeftParen . assignment_expression T_RightParen T_LeftBrace case_list default T_RightBrace
+  126                 | T_Switch T_LeftParen . assignment_expression T_RightParen T_LeftBrace case_list T_RightBrace
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 169
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 167
+
+
+state 112
+
+  129 case_label: T_Case assignment_expression . T_Colon statement_list
+
+    T_Colon  shift, and go to state 168
 
 
 state 113
 
-  126 case_label: T_Case assignment_expression . T_Colon
+    8 primary_expression: T_LeftParen assignment_expression . T_RightParen
 
-    T_Colon  shift, and go to state 170
+    T_RightParen  shift, and go to state 169
 
 
 state 114
-
-  127 case_label: T_Default T_Colon .
-
-    $default  reduce using rule 127 (case_label)
-
-
-state 115
-
-    8 primary_expression: T_LeftParen assignment_expression . T_RightParen
-
-    T_RightParen  shift, and go to state 171
-
-
-state 116
 
    13 postfix_expression: postfix_expression T_Inc .
 
     $default  reduce using rule 13 (postfix_expression)
 
 
-state 117
+state 115
 
    14 postfix_expression: postfix_expression T_Dec .
 
     $default  reduce using rule 14 (postfix_expression)
 
 
-state 118
+state 116
 
    12 postfix_expression: postfix_expression T_Dot . T_Identifier
 
-    T_Identifier  shift, and go to state 172
+    T_Identifier  shift, and go to state 170
 
 
-state 119
+state 117
 
    10 postfix_expression: postfix_expression T_LeftBracket . assignment_expression T_RightBracket
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 173
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 171
 
 
-state 120
+state 118
 
    16 function_call_generic: function_call_header_no_parameters T_RightParen .
 
     $default  reduce using rule 16 (function_call_generic)
 
 
-state 121
+state 119
 
    15 function_call_generic: function_call_header_with_parameters T_RightParen .
 
     $default  reduce using rule 15 (function_call_generic)
 
 
-state 122
+state 120
 
    17 function_call_header_no_parameters: function_call_header T_Void .
 
     $default  reduce using rule 17 (function_call_header_no_parameters)
 
 
-state 123
+state 121
 
    19 function_call_header_with_parameters: function_identifier T_LeftParen . expression_list
    20 function_call_header: function_identifier T_LeftParen .
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
     $default  reduce using rule 20 (function_call_header)
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    expression_list                       go to state 174
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 175
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    expression_list                       go to state 172
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 173
 
 
-state 124
+state 122
 
    52 assignment_operator: T_Equal .
 
     $default  reduce using rule 52 (assignment_operator)
 
 
-state 125
+state 123
 
    53 assignment_operator: T_MulAssign .
 
     $default  reduce using rule 53 (assignment_operator)
 
 
-state 126
+state 124
 
    54 assignment_operator: T_DivAssign .
 
     $default  reduce using rule 54 (assignment_operator)
 
 
-state 127
+state 125
 
    55 assignment_operator: T_AddAssign .
 
     $default  reduce using rule 55 (assignment_operator)
 
 
-state 128
+state 126
 
    56 assignment_operator: T_SubAssign .
 
     $default  reduce using rule 56 (assignment_operator)
 
 
-state 129
+state 127
 
    51 assignment_expression: unary_expression assignment_operator . assignment_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 176
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 174
 
 
-state 130
+state 128
 
    27 unary_expression: unary_operator unary_expression .
 
     $default  reduce using rule 27 (unary_expression)
 
 
-state 131
+state 129
 
    31 multiplicative_expression: multiplicative_expression T_Star . unary_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 177
-    unary_operator                        go to state 75
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 175
+    unary_operator                        go to state 74
 
 
-state 132
+state 130
 
    32 multiplicative_expression: multiplicative_expression T_Slash . unary_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 178
-    unary_operator                        go to state 75
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 176
+    unary_operator                        go to state 74
 
 
-state 133
+state 131
 
    35 additive_expression: additive_expression T_Dash . multiplicative_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 179
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 177
 
 
-state 134
+state 132
 
    34 additive_expression: additive_expression T_Plus . multiplicative_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 180
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 178
 
 
-state 135
+state 133
 
    39 relational_expression: relational_expression T_LessEqual . additive_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 181
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 179
 
 
-state 136
+state 134
 
    40 relational_expression: relational_expression T_GreaterEqual . additive_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 182
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 180
 
 
-state 137
+state 135
 
    37 relational_expression: relational_expression T_LeftAngle . additive_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 183
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 181
 
 
-state 138
+state 136
 
    38 relational_expression: relational_expression T_RightAngle . additive_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 184
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 182
 
 
-state 139
+state 137
 
    42 equality_expression: equality_expression T_EQ . relational_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 185
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 183
 
 
-state 140
+state 138
 
    43 equality_expression: equality_expression T_NE . relational_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 186
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 184
 
 
-state 141
+state 139
 
    45 logical_and_expression: logical_and_expression T_And . equality_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 187
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 185
 
 
-state 142
+state 140
 
    47 logical_or_expression: logical_or_expression T_Or . logical_and_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 101
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 188
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 100
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 186
 
 
-state 143
+state 141
 
    49 conditional_expression: logical_or_expression T_Question . assignment_expression T_Colon assignment_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 189
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 187
 
 
-state 144
+state 142
 
   121 expression_statement: assignment_expression T_Semicolon .
 
     $default  reduce using rule 121 (expression_statement)
 
 
-state 145
+state 143
 
   114 compound_statement: T_LeftBrace var_decl_list T_RightBrace .
 
     $default  reduce using rule 114 (compound_statement)
 
 
-state 146
+state 144
 
   116 var_decl_list: var_decl_list single_declaration .
 
     $default  reduce using rule 116 (var_decl_list)
 
 
-state 147
+state 145
 
    70 single_declaration: type_qualifier . type_specifier T_Identifier T_Semicolon
    72                   | type_qualifier . type_specifier T_Identifier array_specifier T_Semicolon
@@ -2591,20 +2584,20 @@ state 147
     T_Uvec3  shift, and go to state 23
     T_Uvec4  shift, and go to state 24
 
-    type_specifier           go to state 190
+    type_specifier           go to state 188
     type_specifier_nonarray  go to state 35
 
 
-state 148
+state 146
 
    69 single_declaration: type_specifier . T_Identifier T_Semicolon
    71                   | type_specifier . T_Identifier array_specifier T_Semicolon
    73                   | type_specifier . T_Identifier T_Equal assignment_expression T_Semicolon
 
-    T_Identifier  shift, and go to state 191
+    T_Identifier  shift, and go to state 189
 
 
-state 149
+state 147
 
   115 compound_statement: T_LeftBrace var_decl_list statement_list . T_RightBrace
   119 statement_list: statement_list . statement
@@ -2619,102 +2612,101 @@ state 149
     T_Dec            shift, and go to state 54
     T_Switch         shift, and go to state 55
     T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
     T_LeftBrace      shift, and go to state 40
-    T_RightBrace     shift, and go to state 192
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_RightBrace     shift, and go to state 190
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
-    statement                             go to state 151
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 149
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
 
 
-state 150
+state 148
 
   113 compound_statement: T_LeftBrace statement_list T_RightBrace .
 
     $default  reduce using rule 113 (compound_statement)
 
 
-state 151
+state 149
 
   119 statement_list: statement_list statement .
 
     $default  reduce using rule 119 (statement_list)
 
 
-state 152
+state 150
 
    74 single_declaration: type_qualifier type_specifier T_Identifier T_Equal . assignment_expression T_Semicolon
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 193
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 191
 
 
-state 153
+state 151
 
    70 single_declaration: type_qualifier type_specifier T_Identifier T_Semicolon .
 
     $default  reduce using rule 70 (single_declaration)
 
 
-state 154
+state 152
 
    64 function_header_with_parameters: type_qualifier type_specifier T_Identifier T_LeftParen . parameter_list
    66 function_header: type_qualifier type_specifier T_Identifier T_LeftParen .
@@ -2742,296 +2734,344 @@ state 154
 
     $default  reduce using rule 66 (function_header)
 
-    parameter_list           go to state 194
-    type_specifier           go to state 158
+    parameter_list           go to state 192
+    type_specifier           go to state 156
     type_specifier_nonarray  go to state 35
+
+
+state 153
+
+   72 single_declaration: type_qualifier type_specifier T_Identifier array_specifier . T_Semicolon
+
+    T_Semicolon  shift, and go to state 193
+
+
+state 154
+
+   73 single_declaration: type_specifier T_Identifier T_Equal assignment_expression . T_Semicolon
+
+    T_Semicolon  shift, and go to state 194
 
 
 state 155
 
-   72 single_declaration: type_qualifier type_specifier T_Identifier array_specifier . T_Semicolon
-
-    T_Semicolon  shift, and go to state 195
-
-
-state 156
-
-   73 single_declaration: type_specifier T_Identifier T_Equal assignment_expression . T_Semicolon
-
-    T_Semicolon  shift, and go to state 196
-
-
-state 157
-
    63 function_header_with_parameters: type_specifier T_Identifier T_LeftParen parameter_list .
    68 parameter_list: parameter_list . T_Comma type_specifier T_Identifier
 
-    T_Comma  shift, and go to state 197
+    T_Comma  shift, and go to state 195
 
     $default  reduce using rule 63 (function_header_with_parameters)
 
 
-state 158
+state 156
 
    67 parameter_list: type_specifier . T_Identifier
 
-    T_Identifier  shift, and go to state 198
+    T_Identifier  shift, and go to state 196
 
 
-state 159
+state 157
 
    71 single_declaration: type_specifier T_Identifier array_specifier T_Semicolon .
 
     $default  reduce using rule 71 (single_declaration)
 
 
-state 160
+state 158
 
    81 array_specifier: T_LeftBracket conditional_expression T_RightBracket .
 
     $default  reduce using rule 81 (array_specifier)
 
 
-state 161
+state 159
 
   124 condition: assignment_expression .
 
     $default  reduce using rule 124 (condition)
 
 
+state 160
+
+  131 iteration_statement: T_While T_LeftParen condition . T_RightParen statement
+
+    T_RightParen  shift, and go to state 197
+
+
+state 161
+
+  135 for_init_statement: declaration_statement .
+
+    $default  reduce using rule 135 (for_init_statement)
+
+
 state 162
 
-  128 iteration_statement: T_While T_LeftParen condition . T_RightParen statement
+  134 for_init_statement: expression_statement .
 
-    T_RightParen  shift, and go to state 199
+    $default  reduce using rule 134 (for_init_statement)
 
 
 state 163
 
-  132 for_init_statement: declaration_statement .
+  133 iteration_statement: T_For T_LeftParen for_init_statement . for_cond_statement assignment_expression T_RightParen statement
 
-    $default  reduce using rule 132 (for_init_statement)
+    T_Inc            shift, and go to state 53
+    T_Dec            shift, and go to state 54
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
+
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 159
+    condition                             go to state 198
+    conditionopt                          go to state 199
+    for_cond_statement                    go to state 200
 
 
 state 164
 
-  131 for_init_statement: expression_statement .
+  122 selection_statement: T_If T_LeftParen assignment_expression . T_RightParen statement
+  123                    | T_If T_LeftParen assignment_expression . T_RightParen statement T_Else statement
 
-    $default  reduce using rule 131 (for_init_statement)
+    T_RightParen  shift, and go to state 201
 
 
 state 165
 
-  130 iteration_statement: T_For T_LeftParen for_init_statement . for_cond_statement assignment_expression T_RightParen statement
+  140 jump_statement: T_Return assignment_expression T_Semicolon .
 
-    T_Inc            shift, and go to state 53
-    T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
-
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 161
-    condition                             go to state 200
-    conditionopt                          go to state 201
-    for_cond_statement                    go to state 202
+    $default  reduce using rule 140 (jump_statement)
 
 
 state 166
 
-  122 selection_statement: T_If T_LeftParen assignment_expression . T_RightParen statement
-  123                    | T_If T_LeftParen assignment_expression . T_RightParen statement T_Else statement
+  132 iteration_statement: T_Do statement T_While . T_LeftParen assignment_expression T_RightParen T_Semicolon
 
-    T_RightParen  shift, and go to state 203
+    T_LeftParen  shift, and go to state 202
 
 
 state 167
 
-  137 jump_statement: T_Return assignment_expression T_Semicolon .
+  125 switch_statement: T_Switch T_LeftParen assignment_expression . T_RightParen T_LeftBrace case_list default T_RightBrace
+  126                 | T_Switch T_LeftParen assignment_expression . T_RightParen T_LeftBrace case_list T_RightBrace
 
-    $default  reduce using rule 137 (jump_statement)
+    T_RightParen  shift, and go to state 203
 
 
 state 168
 
-  129 iteration_statement: T_Do statement T_While . T_LeftParen assignment_expression T_RightParen T_Semicolon
+  129 case_label: T_Case assignment_expression T_Colon . statement_list
 
-    T_LeftParen  shift, and go to state 204
+    T_While          shift, and go to state 47
+    T_For            shift, and go to state 48
+    T_If             shift, and go to state 49
+    T_Return         shift, and go to state 50
+    T_Break          shift, and go to state 51
+    T_Do             shift, and go to state 52
+    T_Inc            shift, and go to state 53
+    T_Dec            shift, and go to state 54
+    T_Switch         shift, and go to state 55
+    T_Case           shift, and go to state 56
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_LeftBrace      shift, and go to state 40
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
+
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 84
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    statement_list                        go to state 204
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
 
 
 state 169
-
-  125 switch_statement: T_Switch T_LeftParen assignment_expression . T_RightParen T_LeftBrace statement_list T_RightBrace
-
-    T_RightParen  shift, and go to state 205
-
-
-state 170
-
-  126 case_label: T_Case assignment_expression T_Colon .
-
-    $default  reduce using rule 126 (case_label)
-
-
-state 171
 
     8 primary_expression: T_LeftParen assignment_expression T_RightParen .
 
     $default  reduce using rule 8 (primary_expression)
 
 
-state 172
+state 170
 
    12 postfix_expression: postfix_expression T_Dot T_Identifier .
 
     $default  reduce using rule 12 (postfix_expression)
 
 
-state 173
+state 171
 
    10 postfix_expression: postfix_expression T_LeftBracket assignment_expression . T_RightBracket
 
-    T_RightBracket  shift, and go to state 206
+    T_RightBracket  shift, and go to state 205
 
 
-state 174
+state 172
 
    19 function_call_header_with_parameters: function_identifier T_LeftParen expression_list .
    23 expression_list: expression_list . T_Comma assignment_expression
 
-    T_Comma  shift, and go to state 207
+    T_Comma  shift, and go to state 206
 
     $default  reduce using rule 19 (function_call_header_with_parameters)
 
 
-state 175
+state 173
 
    22 expression_list: assignment_expression .
 
     $default  reduce using rule 22 (expression_list)
 
 
-state 176
+state 174
 
    51 assignment_expression: unary_expression assignment_operator assignment_expression .
 
     $default  reduce using rule 51 (assignment_expression)
 
 
-state 177
+state 175
 
    31 multiplicative_expression: multiplicative_expression T_Star unary_expression .
 
     $default  reduce using rule 31 (multiplicative_expression)
 
 
-state 178
+state 176
 
    32 multiplicative_expression: multiplicative_expression T_Slash unary_expression .
 
     $default  reduce using rule 32 (multiplicative_expression)
 
 
-state 179
+state 177
 
    31 multiplicative_expression: multiplicative_expression . T_Star unary_expression
    32                          | multiplicative_expression . T_Slash unary_expression
    35 additive_expression: additive_expression T_Dash multiplicative_expression .
 
-    T_Star   shift, and go to state 131
-    T_Slash  shift, and go to state 132
+    T_Star   shift, and go to state 129
+    T_Slash  shift, and go to state 130
 
     $default  reduce using rule 35 (additive_expression)
 
 
-state 180
+state 178
 
    31 multiplicative_expression: multiplicative_expression . T_Star unary_expression
    32                          | multiplicative_expression . T_Slash unary_expression
    34 additive_expression: additive_expression T_Plus multiplicative_expression .
 
-    T_Star   shift, and go to state 131
-    T_Slash  shift, and go to state 132
+    T_Star   shift, and go to state 129
+    T_Slash  shift, and go to state 130
 
     $default  reduce using rule 34 (additive_expression)
 
 
-state 181
+state 179
 
    34 additive_expression: additive_expression . T_Plus multiplicative_expression
    35                    | additive_expression . T_Dash multiplicative_expression
    39 relational_expression: relational_expression T_LessEqual additive_expression .
 
-    T_Dash  shift, and go to state 133
-    T_Plus  shift, and go to state 134
+    T_Dash  shift, and go to state 131
+    T_Plus  shift, and go to state 132
 
     T_Dash    [reduce using rule 39 (relational_expression)]
     T_Plus    [reduce using rule 39 (relational_expression)]
     $default  reduce using rule 39 (relational_expression)
 
 
-state 182
+state 180
 
    34 additive_expression: additive_expression . T_Plus multiplicative_expression
    35                    | additive_expression . T_Dash multiplicative_expression
    40 relational_expression: relational_expression T_GreaterEqual additive_expression .
 
-    T_Dash  shift, and go to state 133
-    T_Plus  shift, and go to state 134
+    T_Dash  shift, and go to state 131
+    T_Plus  shift, and go to state 132
 
     T_Dash    [reduce using rule 40 (relational_expression)]
     T_Plus    [reduce using rule 40 (relational_expression)]
     $default  reduce using rule 40 (relational_expression)
 
 
-state 183
+state 181
 
    34 additive_expression: additive_expression . T_Plus multiplicative_expression
    35                    | additive_expression . T_Dash multiplicative_expression
    37 relational_expression: relational_expression T_LeftAngle additive_expression .
 
-    T_Dash  shift, and go to state 133
-    T_Plus  shift, and go to state 134
+    T_Dash  shift, and go to state 131
+    T_Plus  shift, and go to state 132
 
     T_Dash    [reduce using rule 37 (relational_expression)]
     T_Plus    [reduce using rule 37 (relational_expression)]
     $default  reduce using rule 37 (relational_expression)
 
 
-state 184
+state 182
 
    34 additive_expression: additive_expression . T_Plus multiplicative_expression
    35                    | additive_expression . T_Dash multiplicative_expression
    38 relational_expression: relational_expression T_RightAngle additive_expression .
 
-    T_Dash  shift, and go to state 133
-    T_Plus  shift, and go to state 134
+    T_Dash  shift, and go to state 131
+    T_Plus  shift, and go to state 132
 
     T_Dash    [reduce using rule 38 (relational_expression)]
     T_Plus    [reduce using rule 38 (relational_expression)]
     $default  reduce using rule 38 (relational_expression)
 
 
-state 185
+state 183
 
    37 relational_expression: relational_expression . T_LeftAngle additive_expression
    38                      | relational_expression . T_RightAngle additive_expression
@@ -3039,15 +3079,15 @@ state 185
    40                      | relational_expression . T_GreaterEqual additive_expression
    42 equality_expression: equality_expression T_EQ relational_expression .
 
-    T_LessEqual     shift, and go to state 135
-    T_GreaterEqual  shift, and go to state 136
-    T_LeftAngle     shift, and go to state 137
-    T_RightAngle    shift, and go to state 138
+    T_LessEqual     shift, and go to state 133
+    T_GreaterEqual  shift, and go to state 134
+    T_LeftAngle     shift, and go to state 135
+    T_RightAngle    shift, and go to state 136
 
     $default  reduce using rule 42 (equality_expression)
 
 
-state 186
+state 184
 
    37 relational_expression: relational_expression . T_LeftAngle additive_expression
    38                      | relational_expression . T_RightAngle additive_expression
@@ -3055,104 +3095,104 @@ state 186
    40                      | relational_expression . T_GreaterEqual additive_expression
    43 equality_expression: equality_expression T_NE relational_expression .
 
-    T_LessEqual     shift, and go to state 135
-    T_GreaterEqual  shift, and go to state 136
-    T_LeftAngle     shift, and go to state 137
-    T_RightAngle    shift, and go to state 138
+    T_LessEqual     shift, and go to state 133
+    T_GreaterEqual  shift, and go to state 134
+    T_LeftAngle     shift, and go to state 135
+    T_RightAngle    shift, and go to state 136
 
     $default  reduce using rule 43 (equality_expression)
 
 
-state 187
+state 185
 
    42 equality_expression: equality_expression . T_EQ relational_expression
    43                    | equality_expression . T_NE relational_expression
    45 logical_and_expression: logical_and_expression T_And equality_expression .
 
-    T_EQ  shift, and go to state 139
-    T_NE  shift, and go to state 140
+    T_EQ  shift, and go to state 137
+    T_NE  shift, and go to state 138
 
     $default  reduce using rule 45 (logical_and_expression)
 
 
-state 188
+state 186
 
    45 logical_and_expression: logical_and_expression . T_And equality_expression
    47 logical_or_expression: logical_or_expression T_Or logical_and_expression .
 
-    T_And  shift, and go to state 141
+    T_And  shift, and go to state 139
 
     $default  reduce using rule 47 (logical_or_expression)
 
 
-state 189
+state 187
 
    49 conditional_expression: logical_or_expression T_Question assignment_expression . T_Colon assignment_expression
 
-    T_Colon  shift, and go to state 208
+    T_Colon  shift, and go to state 207
 
 
-state 190
+state 188
 
    70 single_declaration: type_qualifier type_specifier . T_Identifier T_Semicolon
    72                   | type_qualifier type_specifier . T_Identifier array_specifier T_Semicolon
    74                   | type_qualifier type_specifier . T_Identifier T_Equal assignment_expression T_Semicolon
 
-    T_Identifier  shift, and go to state 209
+    T_Identifier  shift, and go to state 208
 
 
-state 191
+state 189
 
    69 single_declaration: type_specifier T_Identifier . T_Semicolon
    71                   | type_specifier T_Identifier . array_specifier T_Semicolon
    73                   | type_specifier T_Identifier . T_Equal assignment_expression T_Semicolon
 
-    T_Equal        shift, and go to state 97
-    T_Semicolon    shift, and go to state 98
+    T_Equal        shift, and go to state 96
+    T_Semicolon    shift, and go to state 97
     T_LeftBracket  shift, and go to state 45
 
-    array_specifier  go to state 100
+    array_specifier  go to state 99
 
 
-state 192
+state 190
 
   115 compound_statement: T_LeftBrace var_decl_list statement_list T_RightBrace .
 
     $default  reduce using rule 115 (compound_statement)
 
 
-state 193
+state 191
 
    74 single_declaration: type_qualifier type_specifier T_Identifier T_Equal assignment_expression . T_Semicolon
 
-    T_Semicolon  shift, and go to state 210
+    T_Semicolon  shift, and go to state 209
 
 
-state 194
+state 192
 
    64 function_header_with_parameters: type_qualifier type_specifier T_Identifier T_LeftParen parameter_list .
    68 parameter_list: parameter_list . T_Comma type_specifier T_Identifier
 
-    T_Comma  shift, and go to state 197
+    T_Comma  shift, and go to state 195
 
     $default  reduce using rule 64 (function_header_with_parameters)
 
 
-state 195
+state 193
 
    72 single_declaration: type_qualifier type_specifier T_Identifier array_specifier T_Semicolon .
 
     $default  reduce using rule 72 (single_declaration)
 
 
-state 196
+state 194
 
    73 single_declaration: type_specifier T_Identifier T_Equal assignment_expression T_Semicolon .
 
     $default  reduce using rule 73 (single_declaration)
 
 
-state 197
+state 195
 
    68 parameter_list: parameter_list T_Comma . type_specifier T_Identifier
 
@@ -3177,20 +3217,20 @@ state 197
     T_Uvec3  shift, and go to state 23
     T_Uvec4  shift, and go to state 24
 
-    type_specifier           go to state 211
+    type_specifier           go to state 210
     type_specifier_nonarray  go to state 35
 
 
-state 198
+state 196
 
    67 parameter_list: type_specifier T_Identifier .
 
     $default  reduce using rule 67 (parameter_list)
 
 
-state 199
+state 197
 
-  128 iteration_statement: T_While T_LeftParen condition T_RightParen . statement
+  131 iteration_statement: T_While T_LeftParen condition T_RightParen . statement
 
     T_While          shift, and go to state 47
     T_For            shift, and go to state 48
@@ -3202,94 +3242,93 @@ state 199
     T_Dec            shift, and go to state 54
     T_Switch         shift, and go to state 55
     T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
     T_LeftBrace      shift, and go to state 40
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
-    statement                             go to state 212
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 211
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
+
+
+state 198
+
+  136 conditionopt: condition .
+
+    $default  reduce using rule 136 (conditionopt)
+
+
+state 199
+
+  137 for_cond_statement: conditionopt . T_Semicolon
+
+    T_Semicolon  shift, and go to state 212
 
 
 state 200
 
-  133 conditionopt: condition .
-
-    $default  reduce using rule 133 (conditionopt)
-
-
-state 201
-
-  134 for_cond_statement: conditionopt . T_Semicolon
-
-    T_Semicolon  shift, and go to state 213
-
-
-state 202
-
-  130 iteration_statement: T_For T_LeftParen for_init_statement for_cond_statement . assignment_expression T_RightParen statement
+  133 iteration_statement: T_For T_LeftParen for_init_statement for_cond_statement . assignment_expression T_RightParen statement
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 214
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 213
 
 
-state 203
+state 201
 
   122 selection_statement: T_If T_LeftParen assignment_expression T_RightParen . statement
   123                    | T_If T_LeftParen assignment_expression T_RightParen . statement T_Else statement
@@ -3304,304 +3343,335 @@ state 203
     T_Dec            shift, and go to state 54
     T_Switch         shift, and go to state 55
     T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
     T_LeftBrace      shift, and go to state 40
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
-    statement                             go to state 215
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 214
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
+
+
+state 202
+
+  132 iteration_statement: T_Do statement T_While T_LeftParen . assignment_expression T_RightParen T_Semicolon
+
+    T_Inc            shift, and go to state 53
+    T_Dec            shift, and go to state 54
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
+
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 215
+
+
+state 203
+
+  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen . T_LeftBrace case_list default T_RightBrace
+  126                 | T_Switch T_LeftParen assignment_expression T_RightParen . T_LeftBrace case_list T_RightBrace
+
+    T_LeftBrace  shift, and go to state 216
 
 
 state 204
 
-  129 iteration_statement: T_Do statement T_While T_LeftParen . assignment_expression T_RightParen T_Semicolon
+  119 statement_list: statement_list . statement
+  129 case_label: T_Case assignment_expression T_Colon statement_list .
 
+    T_While          shift, and go to state 47
+    T_For            shift, and go to state 48
+    T_If             shift, and go to state 49
+    T_Return         shift, and go to state 50
+    T_Break          shift, and go to state 51
+    T_Do             shift, and go to state 52
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Switch         shift, and go to state 55
+    T_Case           shift, and go to state 56
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_LeftBrace      shift, and go to state 40
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 216
+    T_While          [reduce using rule 129 (case_label)]
+    T_For            [reduce using rule 129 (case_label)]
+    T_If             [reduce using rule 129 (case_label)]
+    T_Return         [reduce using rule 129 (case_label)]
+    T_Break          [reduce using rule 129 (case_label)]
+    T_Do             [reduce using rule 129 (case_label)]
+    T_Inc            [reduce using rule 129 (case_label)]
+    T_Dec            [reduce using rule 129 (case_label)]
+    T_Switch         [reduce using rule 129 (case_label)]
+    T_Case           [reduce using rule 129 (case_label)]
+    T_Semicolon      [reduce using rule 129 (case_label)]
+    T_Dash           [reduce using rule 129 (case_label)]
+    T_Plus           [reduce using rule 129 (case_label)]
+    T_LeftParen      [reduce using rule 129 (case_label)]
+    T_LeftBrace      [reduce using rule 129 (case_label)]
+    T_Identifier     [reduce using rule 129 (case_label)]
+    T_IntConstant    [reduce using rule 129 (case_label)]
+    T_FloatConstant  [reduce using rule 129 (case_label)]
+    T_BoolConstant   [reduce using rule 129 (case_label)]
+    $default         reduce using rule 129 (case_label)
+
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 149
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
 
 
 state 205
-
-  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen . T_LeftBrace statement_list T_RightBrace
-
-    T_LeftBrace  shift, and go to state 217
-
-
-state 206
 
    10 postfix_expression: postfix_expression T_LeftBracket assignment_expression T_RightBracket .
 
     $default  reduce using rule 10 (postfix_expression)
 
 
-state 207
+state 206
 
    23 expression_list: expression_list T_Comma . assignment_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 218
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 217
 
 
-state 208
+state 207
 
    49 conditional_expression: logical_or_expression T_Question assignment_expression T_Colon . assignment_expression
 
     T_Inc            shift, and go to state 53
     T_Dec            shift, and go to state 54
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 219
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 218
 
 
-state 209
+state 208
 
    70 single_declaration: type_qualifier type_specifier T_Identifier . T_Semicolon
    72                   | type_qualifier type_specifier T_Identifier . array_specifier T_Semicolon
    74                   | type_qualifier type_specifier T_Identifier . T_Equal assignment_expression T_Semicolon
 
-    T_Equal        shift, and go to state 152
-    T_Semicolon    shift, and go to state 153
+    T_Equal        shift, and go to state 150
+    T_Semicolon    shift, and go to state 151
     T_LeftBracket  shift, and go to state 45
 
-    array_specifier  go to state 155
+    array_specifier  go to state 153
 
 
-state 210
+state 209
 
    74 single_declaration: type_qualifier type_specifier T_Identifier T_Equal assignment_expression T_Semicolon .
 
     $default  reduce using rule 74 (single_declaration)
 
 
-state 211
+state 210
 
    68 parameter_list: parameter_list T_Comma type_specifier . T_Identifier
 
-    T_Identifier  shift, and go to state 220
+    T_Identifier  shift, and go to state 219
+
+
+state 211
+
+  131 iteration_statement: T_While T_LeftParen condition T_RightParen statement .
+
+    $default  reduce using rule 131 (iteration_statement)
 
 
 state 212
 
-  128 iteration_statement: T_While T_LeftParen condition T_RightParen statement .
+  137 for_cond_statement: conditionopt T_Semicolon .
 
-    $default  reduce using rule 128 (iteration_statement)
+    $default  reduce using rule 137 (for_cond_statement)
 
 
 state 213
 
-  134 for_cond_statement: conditionopt T_Semicolon .
+  133 iteration_statement: T_For T_LeftParen for_init_statement for_cond_statement assignment_expression . T_RightParen statement
 
-    $default  reduce using rule 134 (for_cond_statement)
+    T_RightParen  shift, and go to state 220
 
 
 state 214
 
-  130 iteration_statement: T_For T_LeftParen for_init_statement for_cond_statement assignment_expression . T_RightParen statement
-
-    T_RightParen  shift, and go to state 221
-
-
-state 215
-
   122 selection_statement: T_If T_LeftParen assignment_expression T_RightParen statement .
   123                    | T_If T_LeftParen assignment_expression T_RightParen statement . T_Else statement
 
-    T_Else  shift, and go to state 222
+    T_Else  shift, and go to state 221
 
     T_Else    [reduce using rule 122 (selection_statement)]
     $default  reduce using rule 122 (selection_statement)
 
 
+state 215
+
+  132 iteration_statement: T_Do statement T_While T_LeftParen assignment_expression . T_RightParen T_Semicolon
+
+    T_RightParen  shift, and go to state 222
+
+
 state 216
 
-  129 iteration_statement: T_Do statement T_While T_LeftParen assignment_expression . T_RightParen T_Semicolon
+  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace . case_list default T_RightBrace
+  126                 | T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace . case_list T_RightBrace
 
-    T_RightParen  shift, and go to state 223
+    T_Case  shift, and go to state 56
+
+    case_list   go to state 223
+    case_label  go to state 224
 
 
 state 217
-
-  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace . statement_list T_RightBrace
-
-    T_While          shift, and go to state 47
-    T_For            shift, and go to state 48
-    T_If             shift, and go to state 49
-    T_Return         shift, and go to state 50
-    T_Break          shift, and go to state 51
-    T_Do             shift, and go to state 52
-    T_Inc            shift, and go to state 53
-    T_Dec            shift, and go to state 54
-    T_Switch         shift, and go to state 55
-    T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_LeftBrace      shift, and go to state 40
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
-
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
-    statement                             go to state 85
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    statement_list                        go to state 224
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
-
-
-state 218
 
    23 expression_list: expression_list T_Comma assignment_expression .
 
     $default  reduce using rule 23 (expression_list)
 
 
-state 219
+state 218
 
    49 conditional_expression: logical_or_expression T_Question assignment_expression T_Colon assignment_expression .
 
     $default  reduce using rule 49 (conditional_expression)
 
 
-state 220
+state 219
 
    68 parameter_list: parameter_list T_Comma type_specifier T_Identifier .
 
     $default  reduce using rule 68 (parameter_list)
 
 
-state 221
+state 220
 
-  130 iteration_statement: T_For T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen . statement
+  133 iteration_statement: T_For T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen . statement
 
     T_While          shift, and go to state 47
     T_For            shift, and go to state 48
@@ -3613,47 +3683,46 @@ state 221
     T_Dec            shift, and go to state 54
     T_Switch         shift, and go to state 55
     T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
     T_LeftBrace      shift, and go to state 40
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
     statement                             go to state 225
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
 
 
-state 222
+state 221
 
   123 selection_statement: T_If T_LeftParen assignment_expression T_RightParen statement T_Else . statement
 
@@ -3667,114 +3736,78 @@ state 222
     T_Dec            shift, and go to state 54
     T_Switch         shift, and go to state 55
     T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
     T_LeftBrace      shift, and go to state 40
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
 
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
     statement                             go to state 226
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
 
 
-state 223
+state 222
 
-  129 iteration_statement: T_Do statement T_While T_LeftParen assignment_expression T_RightParen . T_Semicolon
+  132 iteration_statement: T_Do statement T_While T_LeftParen assignment_expression T_RightParen . T_Semicolon
 
     T_Semicolon  shift, and go to state 227
 
 
+state 223
+
+  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list . default T_RightBrace
+  126                 | T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list . T_RightBrace
+  127 case_list: case_list . case_label
+
+    T_Case        shift, and go to state 56
+    T_Default     shift, and go to state 228
+    T_RightBrace  shift, and go to state 229
+
+    case_label  go to state 230
+    default     go to state 231
+
+
 state 224
 
-  119 statement_list: statement_list . statement
-  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace statement_list . T_RightBrace
+  128 case_list: case_label .
 
-    T_While          shift, and go to state 47
-    T_For            shift, and go to state 48
-    T_If             shift, and go to state 49
-    T_Return         shift, and go to state 50
-    T_Break          shift, and go to state 51
-    T_Do             shift, and go to state 52
-    T_Inc            shift, and go to state 53
-    T_Dec            shift, and go to state 54
-    T_Switch         shift, and go to state 55
-    T_Case           shift, and go to state 56
-    T_Default        shift, and go to state 57
-    T_Semicolon      shift, and go to state 58
-    T_Dash           shift, and go to state 59
-    T_Plus           shift, and go to state 60
-    T_LeftParen      shift, and go to state 61
-    T_LeftBrace      shift, and go to state 40
-    T_RightBrace     shift, and go to state 228
-    T_Identifier     shift, and go to state 63
-    T_IntConstant    shift, and go to state 64
-    T_FloatConstant  shift, and go to state 65
-    T_BoolConstant   shift, and go to state 66
-
-    primary_expression                    go to state 67
-    postfix_expression                    go to state 68
-    function_call_generic                 go to state 69
-    function_call_header_no_parameters    go to state 70
-    function_call_header_with_parameters  go to state 71
-    function_call_header                  go to state 72
-    function_identifier                   go to state 73
-    unary_expression                      go to state 74
-    unary_operator                        go to state 75
-    multiplicative_expression             go to state 76
-    additive_expression                   go to state 77
-    relational_expression                 go to state 78
-    equality_expression                   go to state 79
-    logical_and_expression                go to state 80
-    logical_or_expression                 go to state 81
-    conditional_expression                go to state 82
-    assignment_expression                 go to state 83
-    declaration_statement                 go to state 84
-    statement                             go to state 151
-    simple_statement                      go to state 86
-    compound_statement                    go to state 87
-    expression_statement                  go to state 90
-    selection_statement                   go to state 91
-    switch_statement                      go to state 92
-    case_label                            go to state 93
-    iteration_statement                   go to state 94
-    jump_statement                        go to state 95
+    $default  reduce using rule 128 (case_list)
 
 
 state 225
 
-  130 iteration_statement: T_For T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen statement .
+  133 iteration_statement: T_For T_LeftParen for_init_statement for_cond_statement assignment_expression T_RightParen statement .
 
-    $default  reduce using rule 130 (iteration_statement)
+    $default  reduce using rule 133 (iteration_statement)
 
 
 state 226
@@ -3786,13 +3819,151 @@ state 226
 
 state 227
 
-  129 iteration_statement: T_Do statement T_While T_LeftParen assignment_expression T_RightParen T_Semicolon .
+  132 iteration_statement: T_Do statement T_While T_LeftParen assignment_expression T_RightParen T_Semicolon .
 
-    $default  reduce using rule 129 (iteration_statement)
+    $default  reduce using rule 132 (iteration_statement)
 
 
 state 228
 
-  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace statement_list T_RightBrace .
+  130 default: T_Default . T_Colon statement_list
+
+    T_Colon  shift, and go to state 232
+
+
+state 229
+
+  126 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list T_RightBrace .
+
+    $default  reduce using rule 126 (switch_statement)
+
+
+state 230
+
+  127 case_list: case_list case_label .
+
+    $default  reduce using rule 127 (case_list)
+
+
+state 231
+
+  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list default . T_RightBrace
+
+    T_RightBrace  shift, and go to state 233
+
+
+state 232
+
+  130 default: T_Default T_Colon . statement_list
+
+    T_While          shift, and go to state 47
+    T_For            shift, and go to state 48
+    T_If             shift, and go to state 49
+    T_Return         shift, and go to state 50
+    T_Break          shift, and go to state 51
+    T_Do             shift, and go to state 52
+    T_Inc            shift, and go to state 53
+    T_Dec            shift, and go to state 54
+    T_Switch         shift, and go to state 55
+    T_Case           shift, and go to state 56
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_LeftBrace      shift, and go to state 40
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
+
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 84
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    statement_list                        go to state 234
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94
+
+
+state 233
+
+  125 switch_statement: T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list default T_RightBrace .
 
     $default  reduce using rule 125 (switch_statement)
+
+
+state 234
+
+  119 statement_list: statement_list . statement
+  130 default: T_Default T_Colon statement_list .
+
+    T_While          shift, and go to state 47
+    T_For            shift, and go to state 48
+    T_If             shift, and go to state 49
+    T_Return         shift, and go to state 50
+    T_Break          shift, and go to state 51
+    T_Do             shift, and go to state 52
+    T_Inc            shift, and go to state 53
+    T_Dec            shift, and go to state 54
+    T_Switch         shift, and go to state 55
+    T_Case           shift, and go to state 56
+    T_Semicolon      shift, and go to state 57
+    T_Dash           shift, and go to state 58
+    T_Plus           shift, and go to state 59
+    T_LeftParen      shift, and go to state 60
+    T_LeftBrace      shift, and go to state 40
+    T_Identifier     shift, and go to state 62
+    T_IntConstant    shift, and go to state 63
+    T_FloatConstant  shift, and go to state 64
+    T_BoolConstant   shift, and go to state 65
+
+    $default  reduce using rule 130 (default)
+
+    primary_expression                    go to state 66
+    postfix_expression                    go to state 67
+    function_call_generic                 go to state 68
+    function_call_header_no_parameters    go to state 69
+    function_call_header_with_parameters  go to state 70
+    function_call_header                  go to state 71
+    function_identifier                   go to state 72
+    unary_expression                      go to state 73
+    unary_operator                        go to state 74
+    multiplicative_expression             go to state 75
+    additive_expression                   go to state 76
+    relational_expression                 go to state 77
+    equality_expression                   go to state 78
+    logical_and_expression                go to state 79
+    logical_or_expression                 go to state 80
+    conditional_expression                go to state 81
+    assignment_expression                 go to state 82
+    declaration_statement                 go to state 83
+    statement                             go to state 149
+    simple_statement                      go to state 85
+    compound_statement                    go to state 86
+    expression_statement                  go to state 89
+    selection_statement                   go to state 90
+    switch_statement                      go to state 91
+    case_label                            go to state 92
+    iteration_statement                   go to state 93
+    jump_statement                        go to state 94

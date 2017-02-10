@@ -208,6 +208,7 @@ typedef union YYSTYPE
 		List<VarDecl*> *vDeclList;
 		List<Stmt*> *stmtList;
 		List<Expr*> *expList;
+		List<Case*> *caseList;
 
     Identifier *id;
     Expr *exp;
@@ -216,11 +217,13 @@ typedef union YYSTYPE
 		Type *type;
 		TypeQualifier *typeQual;
 		Operator *op;
+		Case *caseLabel;
+		Default *def;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 224 "y.tab.h"
+#line 227 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
