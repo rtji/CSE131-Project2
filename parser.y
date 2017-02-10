@@ -109,7 +109,6 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <call>      function_call_header_no_parameters 
 %type <call>      function_call_header_with_parameters
 %type <call>      function_call_header
-%type <id>				function_identifier
 %type <expList>		expression_list
 %type <exp>				unary_expression
 %type <op>				unary_operator
@@ -220,19 +219,29 @@ function_call_header_no_parameters:
 ;
 
 function_call_header_with_parameters: 
-	function_identifier T_LeftParen expression_list {
-	  $$ = new Call(@1, NULL, $1, $3);
+	T_Identifier T_LeftParen expression_list {
+	  Identifier *id = new Identifier(@1, $1);
+	  $$ = new Call(@1, NULL, id, $3);
+	}
+	| T_Vec2 T_LeftParen expression_list {
+	  Identifier *id = new Identifier(@1, "vec2");
+	  $$ = new Call(@1, NULL, id, $3);
+	}
+	| T_Vec3 T_LeftParen expression_list {
+	  Identifier *id = new Identifier(@1, "vec3");
+	  $$ = new Call(@1, NULL, id, $3);
+	}
+	| T_Vec4 T_LeftParen expression_list {
+	  Identifier *id = new Identifier(@1, "vec4");
+	  $$ = new Call(@1, NULL, id, $3);
 	}
 ;
 
 function_call_header: 
-  function_identifier T_LeftParen { 
-	  $$ = new Call(@1, NULL, $1, new List<Expr*>);
+  T_Identifier T_LeftParen { 
+	  Identifier *id = new Identifier(@1, $1);
+	  $$ = new Call(@1, NULL, id, new List<Expr*>);
 	}
-;
-
-function_identifier: 
-  T_Identifier { $$ = new Identifier(@1, $1); }
 ;
 
 expression_list:
