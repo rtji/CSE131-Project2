@@ -51,6 +51,7 @@ void yyerror(const char *msg); // standard error-handling routine
 		List<VarDecl*> *vDeclList;
 		List<Stmt*> *stmtList;
 		List<Expr*> *expList;
+		List<Case*> *caseList;
 
     Identifier *id;
     Expr *exp;
@@ -59,6 +60,8 @@ void yyerror(const char *msg); // standard error-handling routine
 		Type *type;
 		TypeQualifier *typeQual;
 		Operator *op;
+		Case *caseLabel;
+		Default *def;
 }
 
 
@@ -139,7 +142,9 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <stmt>			selection_statement
 %type <exp>				condition
 %type <stmt>			switch_statement
-%type <exp>				case_label
+%type <caseList>	case_list
+%type <caseLabel>	case_label
+%type <def>				default
 %type <stmt>			iteration_statement
 %type <exp> 			for_init_statement
 %type <exp>				conditionopt
@@ -538,13 +543,25 @@ condition:
 ;
 
 switch_statement:
-  T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace statement_list T_RightBrace {
+  T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list default T_RightBrace {
+	  $$ = new SwitchStmt($3, $6, $7);
   }
+	| T_Switch T_LeftParen assignment_expression T_RightParen T_LeftBrace case_list T_RightBrace {
+	  $$ = new SwitchStmt($3, $6, NULL);
+	}
+;
+
+case_list:
+  case_list case_label { ($$=$1)->Append($2); }
+	| case_label { ($$ = new List<Case*>)->Append($1); }
 ;
 
 case_label:
-  T_Case assignment_expression T_Colon
-  | T_Default T_Colon
+  T_Case assignment_expression T_Colon statement_list { $$ = new Case($2, $4); }
+;
+
+default:
+  T_Default T_Colon statement_list { $$ = new Default($3); }
 ;
 
 iteration_statement:
