@@ -492,7 +492,7 @@ simple_statement:
   | expression_statement { $$ = $1; }
   | selection_statement { $$ = $1; }
   | switch_statement { $$ = $1; }
-  //| case_label { $$ = $1; }
+  | case_label { $$ = $1; }
   | iteration_statement { $$ = $1; }
   | jump_statement { $$ = $1; }
 ;
