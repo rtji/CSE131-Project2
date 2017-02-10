@@ -109,50 +109,47 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <call>      function_call_header_no_parameters 
 %type <call>      function_call_header_with_parameters
 %type <call>      function_call_header
-%type <id>        function_identifier
-%type <expList>   expression_list
-%type <exp>       unary_expression
-%type <op>        unary_operator
-%type <exp>       multiplicative_expression
-%type <exp>       additive_expression
-%type <exp>       relational_expression
-%type <exp>       equality_expression
-%type <exp>       logical_and_expression
-%type <exp>       logical_or_expression
-%type <exp>       conditional_expression
-%type <exp>       assignment_expression
-%type <op>        assignment_operator
-%type <fnDecl>    function_prototype
-%type <fnDecl>    function_declarator
-%type <fnDecl>    function_header
-%type <fnDecl>    function_header_with_parameters
-%type <vDeclList> parameter_list
-%type <varDecl>   single_declaration
-%type <typeQual>  type_qualifier
-%type <type>      type_specifier
-%type <exp>       array_specifier
-%type <type>      type_specifier_nonarray
-%type <exp>       declaration_statement
-%type <stmt>      statement
-%type <stmt>      simple_statement
-%type <stmt>      compound_statement
-%type <vDeclList> var_decl_list
-%type <stmtList>  statement_list
-%type <exp>       expression_statement
-%type <stmt>      selection_statement
-%type <exp>       condition
-%type <stmt>      switch_statement
-%type <caseList>  case_list
-%type <caseLabel> case_label
-%type <def>       default
-%type <stmt>      iteration_statement
-%type <exp>       for_init_statement
-%type <exp>       conditionopt
-%type <exp>       for_cond_statement
-%type <stmt>      jump_statement
-%type <declList>  translation_unit
-%type <decl>      external_declaration
-%type <fnDecl>    function_definition
+%type <expList>		expression_list
+%type <exp>				unary_expression
+%type <op>				unary_operator
+%type <exp>				multiplicative_expression vector_constructor
+%type <exp>				additive_expression
+%type <exp>				relational_expression
+%type <exp>				equality_expression
+%type <exp>				logical_and_expression
+%type <exp>				logical_or_expression
+%type <exp>				conditional_expression
+%type <exp>				assignment_expression
+%type <op>				assignment_operator
+%type <fnDecl>		function_prototype
+%type <fnDecl>		function_declarator
+%type <fnDecl>		function_header
+%type <fnDecl>		function_header_with_parameters
+%type <vDeclList>	parameter_list
+%type <varDecl>		single_declaration
+%type <typeQual>	type_qualifier
+%type <type>			type_specifier
+%type <exp>				array_specifier
+%type <type>			type_specifier_nonarray
+%type <exp>				declaration_statement
+%type <stmt>			statement
+%type <stmt>			simple_statement
+%type <stmt>			compound_statement
+%type <vDeclList>	var_decl_list
+%type <stmtList>	statement_list
+%type <exp>				expression_statement
+%type <stmt>			selection_statement
+%type <exp>				condition
+%type <stmt>			switch_statement
+%type <caseList>	case_list
+%type <caseLabel>	case_label
+%type <def>				default
+%type <stmt>			iteration_statement
+%type <exp> 			for_init_statement
+%type <exp>				conditionopt
+%type <exp> 			for_cond_statement
+%type <stmt>			jump_statement
+%type <fnDecl>		function_definition
 
 
 %%
@@ -193,7 +190,7 @@ primary_expression:
 postfix_expression: 
   primary_expression { $$ = $1; }
   | postfix_expression T_LeftBracket assignment_expression T_RightBracket {
-    $$ = new ArrayAccess(@1, $1, $3);
+    $$ = new ArrayAccess(Join(@1, @4), $1, $3);
   }
   | function_call_generic { $$ = $1; }
   | postfix_expression T_Dot T_Identifier {
@@ -220,19 +217,17 @@ function_call_header_no_parameters:
 ;
 
 function_call_header_with_parameters: 
-  function_identifier T_LeftParen expression_list {
-    $$ = new Call(@1, NULL, $1, $3);
-  }
+	T_Identifier T_LeftParen expression_list {
+	  Identifier *id = new Identifier(@1, $1);
+	  $$ = new Call(@1, NULL, id, $3);
+	}
 ;
 
 function_call_header: 
-  function_identifier T_LeftParen { 
-    $$ = new Call(@1, NULL, $1, new List<Expr*>);
-  }
-;
-
-function_identifier: 
-  T_Identifier { $$ = new Identifier(@1, $1); }
+  T_Identifier T_LeftParen { 
+	  Identifier *id = new Identifier(@1, $1);
+	  $$ = new Call(@1, NULL, id, new List<Expr*>);
+	}
 ;
 
 expression_list:
@@ -344,6 +339,7 @@ assignment_expression:
   | unary_expression assignment_operator assignment_expression {
     $$ = new AssignExpr($1, $2, $3);
   }
+  | vector_constructor {$$ = $1;}
 ;
 
 assignment_operator:
@@ -444,7 +440,7 @@ type_qualifier:
 
 type_specifier:
   type_specifier_nonarray { 
-    $$ = new Type(*$1); 
+    $$ = $1; 
   }
   | type_specifier_nonarray array_specifier {
     $$ = new ArrayType(@1, $1);
@@ -500,12 +496,12 @@ compound_statement:
   T_LeftBrace T_RightBrace {
     $$ = new StmtBlock(new List<VarDecl*>, new List<Stmt*>);
   }
-  | T_LeftBrace statement_list T_RightBrace {
+  /*| T_LeftBrace statement_list T_RightBrace {
     $$ = new StmtBlock(new List<VarDecl*>, $2);
   }
   | T_LeftBrace var_decl_list T_RightBrace {
     $$ = new StmtBlock($2, new List<Stmt*>);
-  }
+  }*/
   | T_LeftBrace var_decl_list statement_list T_RightBrace {
     $$ = new StmtBlock($2, $3);
   }
@@ -521,6 +517,7 @@ var_decl_list:
 statement_list:
     statement { ($$ = new List<Stmt*>)->Append($1); }
   | statement_list statement { ($$=$1)->Append($2); }
+  | { $$ = new List<Stmt*>; }
 ;
 
 expression_statement:
@@ -594,21 +591,29 @@ jump_statement:
   | T_Return assignment_expression T_Semicolon { $$ = new ReturnStmt(@1, $2); }
 ;
 
-translation_unit:
-  external_declaration { ($$ = new List<Decl*>)->Append($1); }
-  | translation_unit external_declaration { ($$=$1)->Append($2); }
-;
-
-external_declaration:
-  function_definition { $$ = $1; }
-  | declaration { $$ = $1; }
-;
-
 function_definition:
   function_prototype compound_statement {
     ($$=$1)->SetFunctionBody($2);
   }
 ;
+
+
+vector_constructor: 
+  T_Vec2 T_LeftParen expression_list T_RightParen {
+    Identifier *id = new Identifier(@1, "vec2");
+    $$ = new Call(Join(@1, @4), NULL, id, $3);
+
+  }
+  | T_Vec3 T_LeftParen expression_list T_RightParen {
+    Identifier *id = new Identifier(@1, "vec3");
+    $$ = new Call(Join(@1, @4), NULL, id, $3);
+  }
+  | T_Vec4 T_LeftParen expression_list T_RightParen {
+    Identifier *id = new Identifier(@1, "vec4");
+    $$ = new Call(Join(@1, @4), NULL, id, $3);
+  }
+;
+
 
 %%
 

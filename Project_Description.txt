@@ -1,0 +1,25 @@
+README by Ryan Tjio and Wesley Wong
+
+STRATEGY / CODING APPROACH
+
+Our strategy is as follows: 
+
+1. Using the GLSL PDF, we outlined the structure of the rules, terminals and
+non-terminals. 
+
+2. We filled all the vertical returns, which are identified by { $$ = $1; }.
+
+3. We incrementally implemented the rules of the grammar to pass the
+elementary, given tests: test1, test2, test3. 
+
+4. We implemented the more difficult grammar to pass the harder test cases. 
+
+5. We debugged our bugs. 
+
+6. Upon debugging our bugs, we found new bugs. Go back to step 5. If no new
+bugs were found, we gave each other high fives and cried tears of joy.
+
+
+DESCRIPTION
+
+A GLSL parser.
