@@ -202,23 +202,23 @@ typedef union YYSTYPE
     float floatConstant;
     char identifier[MaxIdentLen+1]; // +1 for terminating null
     Decl *decl;
-		VarDecl *varDecl;
-		FnDecl *fnDecl;
+    VarDecl *varDecl;
+    FnDecl *fnDecl;
     List<Decl*> *declList;
-		List<VarDecl*> *vDeclList;
-		List<Stmt*> *stmtList;
-		List<Expr*> *expList;
-		List<Case*> *caseList;
+    List<VarDecl*> *vDeclList;
+    List<Stmt*> *stmtList;
+    List<Expr*> *expList;
+    List<Case*> *caseList;
 
     Identifier *id;
     Expr *exp;
-		Call *call;
-		Stmt *stmt;
-		Type *type;
-		TypeQualifier *typeQual;
-		Operator *op;
-		Case *caseLabel;
-		Default *def;
+    Call *call;
+    Stmt *stmt;
+    Type *type;
+    TypeQualifier *typeQual;
+    Operator *op;
+    Case *caseLabel;
+    Default *def;
 
 
 
