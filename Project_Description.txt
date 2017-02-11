@@ -23,3 +23,9 @@ bugs were found, we gave each other high fives and cried tears of joy.
 DESCRIPTION
 
 A GLSL parser.
+
+This parser uses syntax analysis, which is the process of analysing lines of
+code (a string). These lines conform to the rules of a CFG. Thus, the GLSL
+parser analyzes text that is made of a sequence of tokens to determine its
+grammatical structure, which should conform to a CFG. After this, the parser
+builds a data structure that is based on the tokens. 

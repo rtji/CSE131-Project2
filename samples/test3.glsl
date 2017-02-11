@@ -5,6 +5,6 @@ void main()
 {
 
    x = 1;
-   y = x;
+   //y = x;
 }
 

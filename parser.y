@@ -109,47 +109,48 @@ void yyerror(const char *msg); // standard error-handling routine
 %type <call>      function_call_header_no_parameters 
 %type <call>      function_call_header_with_parameters
 %type <call>      function_call_header
-%type <expList>		expression_list
-%type <exp>				unary_expression
-%type <op>				unary_operator
-%type <exp>				multiplicative_expression vector_constructor
-%type <exp>				additive_expression
-%type <exp>				relational_expression
-%type <exp>				equality_expression
-%type <exp>				logical_and_expression
-%type <exp>				logical_or_expression
-%type <exp>				conditional_expression
-%type <exp>				assignment_expression
-%type <op>				assignment_operator
-%type <fnDecl>		function_prototype
-%type <fnDecl>		function_declarator
-%type <fnDecl>		function_header
-%type <fnDecl>		function_header_with_parameters
-%type <vDeclList>	parameter_list
-%type <varDecl>		single_declaration
-%type <typeQual>	type_qualifier
-%type <type>			type_specifier
-%type <exp>				array_specifier
-%type <type>			type_specifier_nonarray
-%type <exp>				declaration_statement
-%type <stmt>			statement
-%type <stmt>			simple_statement
-%type <stmt>			compound_statement
-%type <vDeclList>	var_decl_list
-%type <stmtList>	statement_list
-%type <exp>				expression_statement
-%type <stmt>			selection_statement
-%type <exp>				condition
-%type <stmt>			switch_statement
-%type <caseList>	case_list
-%type <caseLabel>	case_label
-%type <def>				default
-%type <stmt>			iteration_statement
-%type <exp> 			for_init_statement
-%type <exp>				conditionopt
-%type <exp> 			for_cond_statement
-%type <stmt>			jump_statement
-%type <fnDecl>		function_definition
+%type <expList>   expression_list
+%type <exp>       unary_expression
+%type <op>        unary_operator
+%type <exp>       multiplicative_expression vector_constructor
+%type <exp>       additive_expression
+%type <exp>       relational_expression
+%type <exp>       equality_expression
+%type <exp>       logical_and_expression
+%type <exp>       logical_or_expression
+%type <exp>       conditional_expression
+%type <exp>       assignment_expression
+%type <op>        assignment_operator
+%type <fnDecl>    function_prototype
+%type <fnDecl>    function_declarator
+%type <fnDecl>    function_header
+%type <fnDecl>    function_header_with_parameters
+%type <vDeclList> parameter_list
+%type <varDecl>   single_declaration
+%type <typeQual>  type_qualifier
+%type <type>      type_specifier
+%type <exp>       array_specifier
+%type <type>      type_specifier_nonarray
+%type <exp>       declaration_statement
+%type <stmt>      statement
+%type <stmt>      simple_statement
+%type <stmt>      compound_statement
+%type <vDeclList> var_decl_list
+%type <stmtList>  statement_list
+%type <exp>       expression_statement
+%type <stmt>      selection_statement
+%type <exp>       condition
+%type <stmt>      switch_statement
+%type <caseList>  case_list
+%type <caseLabel> case_label
+%type <def>       default
+%type <stmt>      iteration_statement
+%type <exp>       for_init_statement
+%type <exp>       conditionopt
+%type <exp>       for_cond_statement
+%type <stmt>      jump_statement
+%type <fnDecl>    function_definition
+%type <expList>   constant_list
 
 
 %%
@@ -217,17 +218,17 @@ function_call_header_no_parameters:
 ;
 
 function_call_header_with_parameters: 
-	T_Identifier T_LeftParen expression_list {
-	  Identifier *id = new Identifier(@1, $1);
-	  $$ = new Call(@1, NULL, id, $3);
-	}
+  T_Identifier T_LeftParen expression_list {
+    Identifier *id = new Identifier(@1, $1);
+    $$ = new Call(@1, NULL, id, $3);
+  }
 ;
 
 function_call_header: 
   T_Identifier T_LeftParen { 
-	  Identifier *id = new Identifier(@1, $1);
-	  $$ = new Call(@1, NULL, id, new List<Expr*>);
-	}
+    Identifier *id = new Identifier(@1, $1);
+    $$ = new Call(@1, NULL, id, new List<Expr*>);
+  }
 ;
 
 expression_list:
@@ -597,7 +598,7 @@ function_definition:
   }
 ;
 
-
+/*
 vector_constructor: 
   T_Vec2 T_LeftParen expression_list T_RightParen {
     Identifier *id = new Identifier(@1, "vec2");
@@ -612,6 +613,28 @@ vector_constructor:
     Identifier *id = new Identifier(@1, "vec4");
     $$ = new Call(Join(@1, @4), NULL, id, $3);
   }
+;
+*/
+
+vector_constructor: 
+  T_Vec2 T_LeftParen constant_list T_RightParen
+  {
+    Identifier *id = new Identifier(@1, "vec2");
+    $$ = new Call(Join(@1, @4), NULL, id, $3);
+  }
+  | T_Vec3 T_LeftParen constant_list T_RightParen {
+    Identifier *id = new Identifier(@1, "vec3");
+    $$ = new Call(Join(@1, @4), NULL, id, $3);
+  }
+  | T_Vec4 T_LeftParen constant_list T_RightParen {
+    Identifier *id = new Identifier(@1, "vec4");
+    $$ = new Call(Join(@1, @4), NULL, id, $3);
+  }
+;
+
+constant_list:
+  primary_expression { ($$ = new List<Expr*>)->Append($1); }
+  | constant_list T_Comma primary_expression { ($$=$1)->Append($3); }
 ;
 
 
